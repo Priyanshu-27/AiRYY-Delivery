@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "AiRYY_Delivery": "file:",
     "react": "18.3.1",
     "react-native": "0.76.5"
   },
