@@ -7,7 +7,7 @@ import { store, persistor } from './src/Redux/store';
 import Navigation from './src/Navigations/Navigation';
 // import NotificationSounds from 'react-native-notification-sounds';
 import { Linking } from 'react-native';
-
+import './global.css'; 
 function App() {
   // useEffect(() => {
   //   notifee.onBackgroundEvent(async ({type, detail}) => {

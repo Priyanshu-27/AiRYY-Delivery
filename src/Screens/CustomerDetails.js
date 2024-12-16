@@ -14,12 +14,12 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import {useNavigation} from '@react-navigation/native';
-import opencamera from '../components/opencamera';
+// import opencamera from '../components/opencamera';
 import {DOMAIN} from '@env';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import RNFS from 'react-native-fs';
+// import RNFS from 'react-native-fs';
 
-import {launchCamera} from 'react-native-image-picker';
+// import {launchCamera} from 'react-native-image-picker';
 import {useRoute} from '@react-navigation/core';
 import {useSelector} from 'react-redux';
 

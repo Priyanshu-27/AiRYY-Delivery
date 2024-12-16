@@ -25,7 +25,7 @@ const Home = () => {
   const phone = useSelector(state => state.counter.phone);
   if (!phone) {
     console.log('====================================');
-    console.log('lohotu not phone');
+    console.log('User Not Found');
     console.log('====================================');
     dispatch(logout());
   }
@@ -65,7 +65,7 @@ const Home = () => {
         <ScrollView>
           <View style={styles.container}>
             <View style={styles.headercontainer}>
-              <Text style={styles.title}>Home Service</Text>
+              <Text style={styles.title}>Delivery Service</Text>
             </View>
             <View style={styles.Vcontainer}>
               {!isVideoLoaded && (

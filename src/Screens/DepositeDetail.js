@@ -16,12 +16,12 @@ import { useFocusEffect } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import {DOMAIN} from '@env';
 import {Dropdown} from 'react-native-element-dropdown';
-import opencamera from '../components/opencamera';
+// import opencamera from '../components/opencamera';
 import {useNavigation} from '@react-navigation/native';
 import {useRoute} from '@react-navigation/core';
 import { useSelector } from 'react-redux';
 
-import {launchCamera} from 'react-native-image-picker';
+// import {launchCamera} from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
 
 const Checkbox = ({label, value, onPress}) => (
