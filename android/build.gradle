@@ -1,5 +1,7 @@
 buildscript {
     ext {
+        applicationId  = "com.airyy_delivery"
+        namespace = "com.airyy_delivery"
         buildToolsVersion = "35.0.0"
         minSdkVersion = 24
         compileSdkVersion = 35
@@ -10,6 +12,9 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://maven.google.com' }
+        maven { url "https://www.jitpack.io" }
+    
     }
     dependencies {
         classpath("com.android.tools.build:gradle")
