@@ -95,7 +95,7 @@ const Scheduled = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`http://${DOMAIN}/User/TeamSchedule/`);
+      const response = await fetch(`https://${DOMAIN}/User/TeamSchedule/`);
       const data = await response.json();
       setScheduleData(data.data);
     } catch (error) {
