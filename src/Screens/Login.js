@@ -88,7 +88,7 @@ const LoginScreen = () => {
     validateForm();
     setIsFormSubmitted(true);
     setIsLoading(true);
-    fetch(`https://${DOMAIN}/Team/verify_Team/`, {
+    fetch(`https://airyy-backend-three.vercel.app/Team/verify_Team/`, {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
