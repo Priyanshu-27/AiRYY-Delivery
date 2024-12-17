@@ -6,7 +6,9 @@ import Login from '../Screens/Login';
 import DrawerNavigator from './DrawerNavigator';
 import CustomerDetails from '../Screens/CustomerDetails';
 import DepositeDetail from '../Screens/DepositeDetail';
-
+import Emergency from '../Screens/Emergency';
+import BikeAvailability from '../Screens/BikeAvailability';
+import VehicleDetails from '../Screens/VahicleDetails';
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
@@ -20,6 +22,9 @@ const Navigation = () => {
             <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
             <Stack.Screen name="CustomerDetails" component={CustomerDetails} />
             <Stack.Screen name="DepositeDetail" component={DepositeDetail} />
+            <Stack.Screen name="Emergency" component={Emergency} />
+            <Stack.Screen name="BikeAvailibility" component={BikeAvailability} />
+            <Stack.Screen name="VehicleDetails" component={VehicleDetails} />
                       
           </>
         ) : (

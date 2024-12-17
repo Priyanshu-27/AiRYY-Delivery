@@ -8,7 +8,7 @@ import {
   FlatList,
   Dimensions,
   ScrollView,
-  Alert ,
+  Alert,
 } from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useRoute} from '@react-navigation/core';
@@ -28,7 +28,7 @@ const Emergency = () => {
   const [isFocus, setIsFocus] = useState(false);
   const route = useRoute();
   const navigation = useNavigation();
-  const {phoneNumber,ALTphoneNumber, EV, userName,car} = route.params;
+  const {phoneNumber} = route.params;
 
   const relationshipData = [
     {label: 'Brother', value: 'Brother'},
@@ -50,24 +50,24 @@ const Emergency = () => {
   ];
 
   const addContact = () => {
-     if (!firstName || !lastName || !r_phoneNumber || !relation) {
-       Alert.alert('Validation Error', 'Please fill all the fields.');
-       return;
-     }
-     if (r_phoneNumber.length !== 10) {
-       Alert.alert(
-         'Validation Error',
-         'Please enter a valid 10-digit phone number.',
-       );
-       return;
-     }
-     if (relation === 'Other' && !otherRelation) {
-       Alert.alert(
-         'Validation Error',
-         'Please specify the relationship if "Other" is selected.',
-       );
-       return;
-     }
+    if (!firstName || !lastName || !r_phoneNumber || !relation) {
+      Alert.alert('Validation Error', 'Please fill all the fields.');
+      return;
+    }
+    if (r_phoneNumber.length !== 10) {
+      Alert.alert(
+        'Validation Error',
+        'Please enter a valid 10-digit phone number.',
+      );
+      return;
+    }
+    if (relation === 'Other' && !otherRelation) {
+      Alert.alert(
+        'Validation Error',
+        'Please specify the relationship if "Other" is selected.',
+      );
+      return;
+    }
     const newContact = {
       firstName,
       lastName,
@@ -90,13 +90,13 @@ const Emergency = () => {
   };
 
   const handleSubmit = async () => {
-     if (contacts.length === 0) {
-       Alert.alert(
-         'Validation Error',
-         'Please add at least one contact before submitting.',
-       );
-       return;
-     }
+    if (contacts.length === 0) {
+      Alert.alert(
+        'Validation Error',
+        'Please add at least one contact before submitting.',
+      );
+      return;
+    }
     try {
       for (let contact of contacts) {
         const data = {
@@ -120,19 +120,10 @@ const Emergency = () => {
         }
 
         if (response.ok) {
-          if (car){
-            navigation.navigate('CarDetail', {
-              phoneNumber: phoneNumber,
-              AltphoneNumber: ALTphoneNumber,
-            });
-          }else{
-            navigation.navigate('VehicleDetails', {
-              phoneNumber: phoneNumber,
-              EV: EV,
-              userName: userName,
-            });
-          }
-         
+          navigation.navigate('VehicleDetails', {
+            phoneNumber: phoneNumber,
+          });
+
           alert('Contacts updated successfully!');
         }
 
@@ -165,13 +156,13 @@ const Emergency = () => {
           paddingHorizontal: 10,
           paddingVertical: 40,
           // borderWidth: 1,
-          elevation:2,
+          elevation: 2,
           borderColor: 'gray',
           borderRadius: 90,
           borderBottomRightRadius: 0,
           fontSize: 20,
-           letterSpacing:2,
-           textTransform:'capitalize',
+          letterSpacing: 2,
+          textTransform: 'capitalize',
           marginBottom: 20,
           // borderRadius: 10,
           // elevation: 1,
@@ -323,7 +314,7 @@ const styles = StyleSheet.create({
   input: {
     height: 45,
     borderColor: '#FAF9F6',
-   
+
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 15,

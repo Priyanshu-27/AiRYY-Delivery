@@ -33,6 +33,7 @@ const CustomerDetails = () => {
   const [phoneError, setPhoneError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [Update, setUpdate] = useState(false);
   const [IGotTheuser, setIGotTheuser] = useState(false);
 
   const navigation = useNavigation();
@@ -106,6 +107,15 @@ const CustomerDetails = () => {
       if (response.ok) {
         // Show Toast for success
         ToastAndroid.show('User created successfully!', ToastAndroid.SHORT);
+        if (EmergencyCOntact) {
+          navigation.navigate('VehicleDetails', {
+            phoneNumber: phoneNumber,
+          });
+        } else {
+          navigation.navigate('Emergency', {
+            phoneNumber: phoneNumber,
+          });
+        }
 
         // navigation.navigate('NextScreen', {userData: responseData});
       } else {
@@ -165,18 +175,16 @@ const CustomerDetails = () => {
     }
   };
 
-
-
   const [onn, setonn] = useState(true);
   const [isLoadingOtp, setIsLoadingOtp] = useState(false);
   const [isOptReceived, setIsOptReceived] = useState(false);
   const handleConfirmOpt = () => {
     // Handle confirming OTP received
-    setPhoneNumber("")
-    setAdharcard("")
-    setLicense("")
-    setLastName("")
-    setUserName("")
+    setPhoneNumber('');
+    setAdharcard('');
+    setLicense('');
+    setLastName('');
+    setUserName('');
     setIsOptReceived(false); // Reset state for next verification
   };
 
@@ -279,7 +287,8 @@ const CustomerDetails = () => {
                     shadowOffset: {width: 0, height: 2}, // For iOS
                     shadowOpacity: 0.25, // For iOS
                     shadowRadius: 3.84, // For iOS
-                  }}>
+                  }}
+                  onPress={() => setUpdate(prev => !prev)}>
                   <Text style={{color: '#000'}}>Update Doc.</Text>
                 </TouchableOpacity>
               </View>
@@ -357,7 +366,8 @@ const CustomerDetails = () => {
                   shadowOffset: {width: 0, height: 2}, // For iOS
                   shadowOpacity: 0.25, // For iOS
                   shadowRadius: 3.84, // For iOS
-                }}>
+                }}
+                onPress={() => setUpdate(prev => !prev)}>
                 <Text style={{color: '#000'}}>Update Doc.</Text>
               </TouchableOpacity>
             </View>
@@ -422,7 +432,6 @@ const CustomerDetails = () => {
               </View>
             ) : (
               <View style={styles.inputContainer1}>
-             
                 <TextInput
                   placeholder="Phone Number"
                   placeholderTextColor="#000"
@@ -587,7 +596,28 @@ const CustomerDetails = () => {
               </Picker>
             </View>
 
-            {!IGotTheuser ? (
+            {IGotTheuser ? (
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  if (EmergencyCOntact) {
+                    navigation.navigate('VehicleDetails', {
+                      phoneNumber: phoneNumber,
+                    });
+                  } else {
+                    navigation.navigate('Emergency', {
+                      phoneNumber: phoneNumber,
+                    });
+                  }
+                }}
+                disabled={isLoading}>
+                {isLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>Navigate</Text>
+                )}
+              </TouchableOpacity>
+            ) : (
               <TouchableOpacity
                 style={styles.button}
                 onPress={handleSubmit}
@@ -596,19 +626,6 @@ const CustomerDetails = () => {
                   <ActivityIndicator color="#fff" />
                 ) : (
                   <Text style={styles.buttonText}>Submit</Text>
-                )}
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => {
-                  navigation.navigate('BikeAvailability');
-                }}
-                disabled={isLoading}>
-                {isLoading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.buttonText}>Navigate</Text>
                 )}
               </TouchableOpacity>
             )}
@@ -652,7 +669,7 @@ const styles = StyleSheet.create({
   },
   inputContainer1: {
     flexDirection: 'row',
-    alignItems: 'center', 
+    alignItems: 'center',
   },
   label: {
     fontSize: 16,
@@ -678,7 +695,7 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: '#fff',
     color: '#000',
-    marginBottom:10,
+    marginBottom: 10,
   },
   picker: {
     height: 40,

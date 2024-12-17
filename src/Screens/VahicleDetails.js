@@ -42,16 +42,13 @@ const Checkbox = ({text, value, onPress}) => {
 };
 
 const VehicleDetails = () => {
-  const [KM, setKM] = useState('');
   const [refreshing, setRefreshing] = useState(false);
-  
+
   const [Bikeid, setBikeid] = useState('');
   const [Bikeiderror, setBikeiderror] = useState('');
-  const [selectedBike, setSelectedBike] = useState([]);
-  const [Persnal, setPersnal] = useState(0);
-  const [calculatedValue] = useState(new Animated.Value(0));
-  const [BikePicture, setBikePicture] = useState(null);
+
   const [Amount, setAmount] = useState(0);
+  const [battery_free, setbattery_free] = useState(0);
   const phone = useSelector(state => state.counter.phone);
   const route = useRoute();
 
@@ -62,11 +59,17 @@ const VehicleDetails = () => {
   const [ReturnAmount, setReturnAmount] = useState('NO');
   const [ReturnAmountUPI, setReturnAmountUPI] = useState(0);
   const [ReturnAmountCash, setReturnAmountCash] = useState(0);
+  const [batteryList, setBatteryList] = useState([
+    {label: 'Select Battery', value: 'Select Battery'},
+  ]);
+  const [selectedBattery, setSelectedBattery] = useState('Select Battery');
 
-  const [selectedImageBikeReading, setSelectedImageBikeReading] =
-    useState(null);
+  const [BikeList, setBikeList] = useState([
+    {label: 'Select Bike', value: 'Select Bike'},
+  ]);
+  const [selectedBike, setSelectedBike] = useState('Select Bike');
 
-  const {phoneNumber, EV} = route.params;
+  const {phoneNumber} = route.params;
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [TimeTaken, setTimeTaken] = useState(null);
@@ -83,38 +86,62 @@ const VehicleDetails = () => {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    getBatteries();
+    getBikes()
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
- 
-  const handalAmount = () => {
-    if (EV) {
-      const days = Math.floor(TimeTaken / 24);
-      const remainingHours = TimeTaken % 24;
-      const cost =
-        days * 700 +
-        Math.floor(remainingHours / 12) * 400 +
-        (remainingHours % 12) * 30;
 
-      setAmount(cost);
-    } else {
-      const days = Math.floor(TimeTaken / 24);
-      const remainingHours = TimeTaken % 24;
-      const cost =
-        days * 700 +
-        Math.floor(remainingHours / 12) * 400 +
-        (remainingHours % 12) * 40;
+  const getBatteries = async () => {
+    try {
+      const response = await fetch(`https://${DOMAIN}/Delivery/batteries/`);
+      const data = await response.json();
 
-      setAmount(cost);
+      if (data && Array.isArray(data)) {
+        setBatteryList([
+          {label: 'Select Battery', value: 'Select Battery'}, // Default option
+          ...data.map(battery => ({
+            label: `${battery.battery_id} - ${battery.charging_percentage}%`, // Displaying both battery ID and charging percentage
+            value: battery.battery_id, // Using battery_id as value
+          })),
+        ]);
+      } else {
+        console.error('Unexpected data format:', data);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
-  const handleSubmit = () => {
-    if (!validateFields()) {
-      Alert.alert('Error', 'Please fill all the required fields.');
-      return;
+  const getBikes = async () => {
+    try {
+      const response = await fetch(
+        `https://${DOMAIN}/Delivery_Bikes/delivery-bikes/`,
+      );
+      const data = await response.json();
+
+      if (data && Array.isArray(data)) {
+        setBikeList([
+          {label: 'Select bike', value: 'Select bike'}, // Default option
+          ...data.map(bike => ({
+            label: `${bike.license_plate} - ${bike.type}`, // Displaying both bike ID and charging percentage
+            value: bike.license_plate, // Using bike_id as value
+          })),
+        ]);
+      } else {
+        console.error('Unexpected data format:', data);
+      }
+    } catch (error) {
+      console.log(error);
     }
-  
+  };
+
+  const handleSubmit = () => {
+    // if (!validateFields()) {
+    //   Alert.alert('Error', 'Please fill all the required fields.');
+    //   return;
+    // }
+
     // Convert TimeTaken into hours based on the selected unit (hours, days, or months)
     let timeInHours = parseFloat(TimeTaken);
     if (TimeTakenUnit === 'days') {
@@ -122,55 +149,31 @@ const VehicleDetails = () => {
     } else if (TimeTakenUnit === 'months') {
       timeInHours *= 24 * 30; // Assuming 1 month = 30 days
     }
-  
-    // Create FormData object
-    const formData = new FormData();
-  
-    // Add image data (if available)
-    if (selectedImageBikeReading) {
-      const bikeReadingImageData = {
-        uri: selectedImageBikeReading,
-        type: 'image/jpeg',
-        name: `${phoneNumber}_Kilometer_Reading.jpg`,
-      };
-      formData.append('KM_Reading', bikeReadingImageData);
-    }
-  
-    if (BikePicture) {
-      const bikePictureData = {
-        uri: BikePicture,
-        type: 'image/jpeg',
-        name: `${phoneNumber}_Previous_Pic.jpg`,
-      };
-      formData.append('Pic_before', bikePictureData);
-    }
-  
-    // Append the rest of the form fields
-    formData.append('Estimated_Amount', Amount || 0); 
-    formData.append('KM_Previous', KM || '');         
-    formData.append('EV', EV ? 'true' : 'false');          
-    formData.append('Bikeid', Bikeid || '');           
-    formData.append('AdvancePay', parseInt(AdvancePayCash) + parseInt(AdvancePayUPI));
-    formData.append('AdvancePayUPI', AdvancePayUPI || 0); 
-    formData.append('AdvancePayCash', AdvancePayCash || 0); 
-    formData.append('Persnal', Persnal);
-    formData.append('staff', phone);
-  
-    // Add return amount details
-    const totalReturnAmount = parseInt(ReturnAmountCash) + parseInt(ReturnAmountUPI);
-    formData.append(
-      'return',
-      `cash = ${parseInt(ReturnAmountCash)} upi = ${parseInt(ReturnAmountUPI)} total = ${totalReturnAmount}`
-    );
-  
-    // Append the calculated time thought in hours
-    formData.append('TimeThought', timeInHours || 0);
-    console.log(formData)
+
+    const data = {
+      "phone": phoneNumber,
+      "license_plate": selectedBike,
+      "duration": timeInHours,
+      "rate_per_duration":Amount,
+      "battery_id": selectedBattery,
+      "mode_of_rental": TimeTakenUnit,
+      "battery_free":battery_free
+      // "AdvancePay": AdvancePay,
+      // "AdvancePayUPI": AdvancePayUPI,
+      // "AdvancePayCash": AdvancePayCash,
+      // "ReturnAmount": ReturnAmount,
+      // "ReturnAmountUPI": ReturnAmountUPI,
+      // "ReturnAmountCash": ReturnAmountCash
+  }  
+  console.log(data)
     setIsLoading(true);
 
-    fetch(`https://${DOMAIN}/Bike/assign_bike_to_bike/${phoneNumber}/`, {
-      method: 'PUT',
-      body: formData,
+    fetch(`https://${DOMAIN}/Delivery/delivery-rental/create/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', 
+      },
+      body: JSON.stringify(data),
     })
       .then(response => {
         if (!response.ok) {
@@ -179,10 +182,10 @@ const VehicleDetails = () => {
         return response.json();
       })
       .then(responseJson => {
-        if (responseJson.bike && responseJson.bike.license_plate) {
+        if (responseJson.rental) {
           Alert.alert(
             'Done',
-            `Give this Bike ${responseJson.bike.license_plate}`,
+            `Give this Bike ${responseJson.rental}`,
             [
               {
                 text: 'OK',
@@ -222,185 +225,29 @@ const VehicleDetails = () => {
         ]);
         setIsLoading(false);
       });
-
-      const pattern = /\/([\w-]+)\.jpg$/;
-
-    const newUrl = selectedImageBikeReading.replace(pattern, '');
-    RNFS.readdir(newUrl)
-      .then(files => {
-        // Filter files with .jpg extension
-        const jpgFiles = files.filter(file => file.endsWith('.jpg'));
-
-        // Delete each .jpg file
-        jpgFiles.forEach(file => {
-          const filePath = `${newUrl}/${file}`;
-          
-          // Delete the file
-          RNFS.unlink(filePath)
-          .then(() => {
-              console.log(`File ${file} deleted successfully`);
-            })
-            .catch(error => {
-              console.log(`Error deleting file ${file}:`, error);
-            });
-        });
-
-        if (jpgFiles.length === 0) {
-          console.log('No .jpg files found to delete');
-        }
-      })
-      .catch(error => {
-        console.log('Error reading directory:', error);
-      });
   };
-  const options = {
-    mediaType: 'photo',
-    quality: 0.4,
-    storageOptions: {
-      skipBackup: true,
-    },
-  };
-  
-    const validateFields = () => {
-      let isValid = true;
-  
-      if (!TimeTaken) {
-        setTimeTakenerror(`Please enter expected ${TimeTakenUnit}`);
-        
-        isValid = false;
-      } else {
-        setTimeTakenerror('');
-      }
-  
-      if (!KM) {
-        setKMError('Please enter Current Kilometer');
-        isValid = false;
-      } else {
-        setKMError('');
-      }
-  
-      if (!selectedImageBikeReading) {
-        setBikeReadingError('Please upload Bike Reading Picture');
-        isValid = false;
-      } else {
-        setBikeReadingError('');
-      }
-  
-      if (!BikePicture) {
-        setBikePictureError('Please upload Bike Condition Picture');
-        isValid = false;
-      } else {
-        setBikePictureError('');
-      }
-      if (!Bikeid) {
-        setBikeiderror('Please choose BikeID');
-        isValid = false;
-      } else {
-        setBikeiderror('');
-      }
-  
-      return isValid;
-    };
-  const handleBikePicturePicker = async () => {
-    try {
-      launchCamera(options, response => {
-        console.log('Response = ', response);
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else if (response.customButton) {
-          console.log('User tapped custom button: ', response.customButton);
-        } else {
-          setBikePicture(response.assets[0].uri);
-        }
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const handleBikeReadingPicturePicker = async () => {
-    try {
-      launchCamera(options, response => {
-        console.log('Response = ', response);
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else if (response.customButton) {
-          console.log('User tapped custom button: ', response.customButton);
-        } else {
-          setSelectedImageBikeReading(response.assets[0].uri);
-          handalAmount();
-        }
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const handleBikePicturePicker2 = async () => {
-    const result = await opencamera(phoneNumber, '_Adhar_Card.jpg');
-    if (result) {
-      // console.log(result.path,result.name)
-      setBikePicture(result.path);
+
+  const validateFields = () => {
+    let isValid = true;
+
+    if (!TimeTaken) {
+      setTimeTakenerror(`Please enter expected ${TimeTakenUnit}`);
+
+      isValid = false;
     } else {
-      Alert.alert('Error', 'Failed to capture Image');
+      setTimeTakenerror('');
     }
-  };
-  const handleBikeReadingPicturePicker2 = async () => {
-    const result = await opencamera(phoneNumber, '_Adhar_Card.jpg');
-    if (result) {
-      // console.log(result.path,result.name)
-      setSelectedImageBikeReading(result.path);
-      handalAmount();
+
+    if (!Bikeid) {
+      setBikeiderror('Please choose BikeID');
+      isValid = false;
     } else {
-      Alert.alert('Error', 'Failed to capture Image');
+      setBikeiderror('');
     }
+
+    return isValid;
   };
-  const calculateValue = () => {
-    let timeInHours = parseFloat(TimeTaken); // Ensure TimeTaken is a valid number
-  
-    // Handle case where TimeTaken is invalid or not a number
-    if (isNaN(timeInHours)) {
-      return 0; // Default to 0 or some other valid number
-    }
-  
-    // Convert days or months to hours
-    if (TimeTakenUnit === 'days') {
-      timeInHours *= 24;
-    } else if (TimeTakenUnit === 'months') {
-      timeInHours *= 24 * 30; // Assuming 1 month = 30 days
-    }
-  
-    if (EV) {
-      const days = Math.floor(timeInHours / 24);
-      const remainingHours = timeInHours % 24;
-      const cost = days * 700 + Math.floor(remainingHours / 12) * 400 + (remainingHours % 12) * 30;
-  
-      return cost;
-    } else {
-      const days = Math.floor(timeInHours / 24);
-      const remainingHours = timeInHours % 24;
-      const cost = days * 700 + Math.floor(remainingHours / 12) * 400 + (remainingHours % 12) * 40;
-  
-      return cost;
-    }
-  };
-  
-  
-  useEffect(() => {
-    const newValue = calculateValue();
-  
-    if (!isNaN(newValue)) {
-      Animated.timing(calculatedValue, {
-        toValue: newValue,
-        duration: 500,
-        useNativeDriver: false,
-      }).start();
-    }
-  }, [KM, TimeTaken, TimeTakenUnit]);
-  
-  
+
   const handlechange = method => {
     if (method === 'AdvancePay') {
       setAdvancePay(AdvancePay === 'AdvancePay' ? 'NO' : 'AdvancePay');
@@ -417,35 +264,10 @@ const VehicleDetails = () => {
 
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
-      fetch(`https://${DOMAIN}/Bike/Bikeids/`, {
-        method: 'GET',
-      })
-        .then(response => response.json())
-        .then(responseJson => {
-          setBikeData(responseJson);
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      getBatteries();
+      getBikes()
     });
-    if (EV) {
-      // Filter for 'value' equal to true when EV is true
-      const filteredData = BikeData.filter(item => item.value === true);
 
-      setSelectedBike(filteredData);
-      if (filteredData.length > 0) {
-        setValue(filteredData[0].value);
-      }
-    } else {
-      // Filter for 'value' equal to false when EV is false
-
-      const filteredData = BikeData.filter(item => item.value === false);
-
-      setSelectedBike(filteredData);
-      if (filteredData.length > 0) {
-        setValue(filteredData[0].value);
-      }
-    }
     return focusHandler;
   }, [BikeData, navigation, refreshing]);
 
@@ -471,100 +293,86 @@ const VehicleDetails = () => {
           ) : null}
           <Dropdown
             style={styles.dropdown}
+            search
+            searchField='label'
+            searchQuery={Bikeid}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
-            data={selectedBike}
+            data={BikeList}
             itemTextStyle={{color: '#000'}}
-            maxHeight={300}
+            placeholderTextColor="#000"
             labelField="label"
             valueField="value"
-            placeholder="Select Bike ID"
-            placeholderTextColor="#000"
-            value={value}
+            placeholder="Select Bike"
+            searchPlaceholder="Search..."
             onChange={item => {
-              setValue(item.value);
-              const selectedBikeId2 = item.label.split(' -   ')[0]; // Extract the B_id
-              setBikeid(selectedBikeId2);
+              setSelectedBike(item.value);
+            }}
+          />
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            searchField='label'
+            search
+
+            data={batteryList}
+            itemTextStyle={{color: '#000'}}
+            placeholderTextColor="#000"
+            labelField="label"
+            valueField="value"
+            placeholder="Select Battery"
+            searchPlaceholder="Search..."
+            onChange={item => {
+              setSelectedBattery(item.value);
             }}
           />
 
           {TimeTakenerror ? (
             <Text style={styles.errorText}>{TimeTakenerror}</Text>
           ) : null}
-          
-            <Dropdown
-              style={styles.dropdown}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              data={timeUnitOptions}
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              itemTextStyle={{color: '#000'}}
-              placeholderTextColor="#000"
-              placeholder="Select Time Unit"
-              value={TimeTakenUnit}
-              onChange={item => setTimeTakenUnit(item.value)} // Update the unit based on the selection
-            />
 
-            {/* Input for time */}
-            <TextInput
-              placeholder={`Enter ${TimeTakenUnit}`}
-              value={TimeTaken}
-              placeholderTextColor="#000"
-              onChangeText={text => setTimeTaken(text)}
-              keyboardType="numeric"
-              style={styles.inputKm}
-            />
-          
-          {KMError ? <Text style={styles.errorText}>{KMError}</Text> : null}
-          <TextInput
-            placeholder="Enter Current Kilometer"
-            value={KM}
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            data={timeUnitOptions}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            itemTextStyle={{color: '#000'}}
             placeholderTextColor="#000"
-            onChangeText={text => setKM(text)}
-            keyboardType="numeric"
-            style={styles.inputKm}></TextInput>
-          {BikeReadingError ? (
-            <Text style={styles.errorText}>{BikeReadingError}</Text>
-          ) : null}
-          <TouchableOpacity
-            style={[styles.inputContainer, styles.documentPicker]}
-            onPress={handleBikeReadingPicturePicker}>
-            <Text style={styles.uploadText}>Click to Upload Bike Reading.</Text>
-          </TouchableOpacity>
-          {selectedImageBikeReading && (
-            <View style={styles.imageContainer}>
-              <Image
-                source={{uri: selectedImageBikeReading}}
-                style={styles.image}
-              />
-              <Text style={styles.imageText}>Bike Reading pic</Text>
-            </View>
-          )}
-          {BikePictureError ? (
-            <Text style={styles.errorText}>{BikePictureError}</Text>
-          ) : null}
+            placeholder="Select Time Unit"
+            value={TimeTakenUnit}
+            onChange={item => setTimeTakenUnit(item.value)} // Update the unit based on the selection
+          />
 
-          <TouchableOpacity
-            style={[styles.inputContainer, styles.documentPicker]}
-            onPress={handleBikePicturePicker}>
-            <Text style={styles.uploadText}>
-              Click to Upload Bike Condition.
-            </Text>
-          </TouchableOpacity>
-          {BikePicture && (
-            <View style={styles.imageContainer}>
-              <Image source={{uri: BikePicture}} style={styles.image} />
-              <Text style={styles.imageText}>Bike Condition pic</Text>
-            </View>
-          )}
-          <View style={styles.animatedContainer}>
-            <Animated.Text
-              style={[styles.calculatedValue, {opacity: calculatedValue}]}>
-              <Text>₹</Text> {calculateValue()}
-            </Animated.Text>
-          </View>
+          {/* Input for time */}
+          <TextInput
+            placeholder={`Enter ${TimeTakenUnit}`}
+            value={TimeTaken}
+            placeholderTextColor="#000"
+            onChangeText={text => setTimeTaken(text)}
+            keyboardType="numeric"
+            style={styles.inputKm}
+          />
+          <TextInput
+            placeholder={`Enter Amount`}
+            value={Amount}
+            placeholderTextColor="#000"
+            onChangeText={text => setAmount(text)}
+            keyboardType="numeric"
+            style={styles.inputKm}
+          />
+           <TextInput
+            placeholder={`Enter Free Batterys`}
+            value={battery_free}
+            placeholderTextColor="#000"
+            onChangeText={text => setbattery_free(text)}
+            keyboardType="numeric"
+            style={styles.inputKm}
+          />
+
           <Checkbox
             text="Advance Payment (Optional)"
             value={AdvancePay === 'AdvancePay'}

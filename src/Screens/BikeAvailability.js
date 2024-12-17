@@ -424,6 +424,8 @@ const BikeAvailability = ({navigation}) => {
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
                       data={batteryList}
+                      search
+                      searchField='label'
                       itemTextStyle={{color: '#000'}}
                       placeholderTextColor="#000"
                       labelField="label"
