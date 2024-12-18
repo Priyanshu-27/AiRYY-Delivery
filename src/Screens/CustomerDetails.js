@@ -160,7 +160,7 @@ const CustomerDetails = () => {
         setGender(responseData.user_Gender);
         setSelectedState(responseData.user_State);
 
-        ToastAndroid.show('User Found!', ToastAndroid.SHORT);
+        ToastAndroid.show(`User found !`, ToastAndroid.SHORT);
       } else {
         ToastAndroid.show(
           responseData.error || 'User not found',
