@@ -18,6 +18,13 @@ npm start
 yarn start
 ```
 
+C:\Airyy\AiRYY-Delivery\android\app\build\outputs\apk\release
+C:\Airyy\AiRYY-Delivery\android\app\build\outputs\apk\release\app-release.apk && npm start
+cd android &&  gradlew assembleRelease && cd..
+cd android && .\gradlew clean &&  gradlew assembleRelease && cd..
+cd android && .\gradlew clean &&  cd.. && npm start
+
+
 ## Step 2: Start your Application
 
 Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:

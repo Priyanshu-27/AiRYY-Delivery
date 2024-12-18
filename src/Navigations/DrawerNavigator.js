@@ -23,8 +23,7 @@ import Home from '../Screens/Home';
 import {useDispatch} from 'react-redux';
 import {logout} from '../Redux/Counter/counterAction';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-
+import MiddlePayment from '../Screens/MiddlePayment';
 
 const DrawerContent = props => {
   const dispatch = useDispatch();
@@ -141,7 +140,22 @@ const DrawerNavigator = () => {
         }}
       />
 
-   
+      <Drawer.Screen
+        name="Pay In Between"
+        component={MiddlePayment}
+        options={{
+          drawerLabel: 'Pay In Between',
+          title: 'Pay In Between',
+          drawerIcon: ({focused}) => (
+            <MuiIcons
+              name={focused ? 'attach-money' : 'attach-money'} // Use your preferred icon names
+              size={26}
+              color={focused ? '#feb101' : '#000000'}
+            />
+          ),
+          drawerItemStyle: {textAlign: 'left'}, // Align text to the left
+        }}
+      />
     </Drawer.Navigator>
   );
 };

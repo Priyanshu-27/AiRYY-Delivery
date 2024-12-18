@@ -87,7 +87,7 @@ const VehicleDetails = () => {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     getBatteries();
-    getBikes()
+    getBikes();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -151,80 +151,86 @@ const VehicleDetails = () => {
     }
 
     const data = {
-      "phone": phoneNumber,
-      "license_plate": selectedBike,
-      "duration": timeInHours,
-      "rate_per_duration":Amount,
-      "battery_id": selectedBattery,
-      "mode_of_rental": TimeTakenUnit,
-      "battery_free":battery_free
-      // "AdvancePay": AdvancePay,
-      // "AdvancePayUPI": AdvancePayUPI,
-      // "AdvancePayCash": AdvancePayCash,
-      // "ReturnAmount": ReturnAmount,
-      // "ReturnAmountUPI": ReturnAmountUPI,
-      // "ReturnAmountCash": ReturnAmountCash
-  }  
-  console.log(data)
-    setIsLoading(true);
+      phone: phoneNumber,
+      license_plate: selectedBike,
+      duration: timeInHours,
+      rate_per_duration: Amount,
+      battery_id: selectedBattery,
+      mode_of_rental: TimeTakenUnit,
+      battery_free: battery_free,
 
-    fetch(`https://${DOMAIN}/Delivery/delivery-rental/create/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', 
-      },
-      body: JSON.stringify(data),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(responseJson => {
-        if (responseJson.rental) {
-          Alert.alert(
-            'Done',
-            `Give this Bike ${responseJson.rental}`,
-            [
-              {
-                text: 'OK',
-                onPress: () => {
-                  // Navigate to the 'DrawerNavigator' screen after the user presses "OK"
-                  navigation.navigate('DrawerNavigator');
-                },
-              },
-            ],
-          );
-        } else if (responseJson.Error) {
-          Alert.alert(`Error`, `Try again! Error: ${responseJson.Error}`, [
-            {
-              text: 'OK',
-            },
-          ]);
-        } else {
-          Alert.alert(
-            'Unexpected Response',
-            'The API response does not contain the expected data structure.',
-            [
-              {
-                text: 'OK',
-              },
-            ],
-          );
-        }
 
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error('API Error:', error);
-        Alert.alert('Error', `Try again!`, [
-          {
-            text: 'OK',
-          },
-        ]);
-        setIsLoading(false);
-      });
+     
+      mode_of_payment: ['upi', 'cash', 'mix'].includes(AdvancePayUPI > 0 && AdvancePayCash > 0 ? 'mix' : AdvancePayCash > 0 ? 'cash' : 'upi') ? (AdvancePayUPI > 0 && AdvancePayCash > 0 ? 'mix' : AdvancePayCash > 0 ? 'cash' : 'upi') : 'upi',
+      advance_amount: AdvancePay,
+      advance_upi_amount: AdvancePayCash,
+      advance_cash_amount: AdvancePayUPI,
+
+
+
+      date: new Date().toISOString().split('T')[0],
+      reason : "Have to return",
+      mode_of_deposit: ['upi', 'cash', 'mix'].includes(ReturnAmountUPI > 0 && ReturnAmountCash > 0 ? 'mix' : ReturnAmountCash > 0 ? 'cash' : 'upi') ? (ReturnAmountUPI > 0 && ReturnAmountCash > 0 ? 'mix' : ReturnAmountCash > 0 ? 'cash' : 'upi') : 'upi',
+      deposit_amount: ReturnAmount,
+      upi_amount: ReturnAmountUPI,
+      cash_amount: ReturnAmountCash,
+    };
+
+    // setIsLoading(true);
+
+    // fetch(`https://${DOMAIN}/Delivery/delivery-rental/create/`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(data),
+    // })
+    //   .then(response => {
+    //     if (!response.ok) {
+    //       throw new Error(`HTTP error! status: ${response.status}`);
+    //     }
+    //     return response.json();
+    //   })
+    //   .then(responseJson => {
+    //     if (responseJson.rental) {
+    //       Alert.alert('Done', `Give this Bike ${responseJson.rental}`, [
+    //         {
+    //           text: 'OK',
+    //           onPress: () => {
+    //             // Navigate to the 'DrawerNavigator' screen after the user presses "OK"
+    //             navigation.navigate('DrawerNavigator');
+    //           },
+    //         },
+    //       ]);
+    //     } else if (responseJson.Error) {
+    //       Alert.alert(`Error`, `Try again! Error: ${responseJson.Error}`, [
+    //         {
+    //           text: 'OK',
+    //         },
+    //       ]);
+    //     } else {
+    //       Alert.alert(
+    //         'Unexpected Response',
+    //         'The API response does not contain the expected data structure.',
+    //         [
+    //           {
+    //             text: 'OK',
+    //           },
+    //         ],
+    //       );
+    //     }
+
+    //     setIsLoading(false);
+    //   })
+    //   .catch(error => {
+    //     console.error('API Error:', error);
+    //     Alert.alert('Error', `Try again!`, [
+    //       {
+    //         text: 'OK',
+    //       },
+    //     ]);
+    //     setIsLoading(false);
+    //   });
   };
 
   const validateFields = () => {
@@ -265,7 +271,7 @@ const VehicleDetails = () => {
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
       getBatteries();
-      getBikes()
+      getBikes();
     });
 
     return focusHandler;
@@ -294,7 +300,7 @@ const VehicleDetails = () => {
           <Dropdown
             style={styles.dropdown}
             search
-            searchField='label'
+            searchField="label"
             searchQuery={Bikeid}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
@@ -313,9 +319,8 @@ const VehicleDetails = () => {
             style={styles.dropdown}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
-            searchField='label'
+            searchField="label"
             search
-
             data={batteryList}
             itemTextStyle={{color: '#000'}}
             placeholderTextColor="#000"
@@ -364,7 +369,7 @@ const VehicleDetails = () => {
             keyboardType="numeric"
             style={styles.inputKm}
           />
-           <TextInput
+          <TextInput
             placeholder={`Enter Free Batterys`}
             value={battery_free}
             placeholderTextColor="#000"

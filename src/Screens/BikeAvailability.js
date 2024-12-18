@@ -15,6 +15,7 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {DOMAIN} from '@env';
 
 const BikeAvailability = ({navigation}) => {
+  
   const [AssignedDetails, setAssignedDetails] = useState([]);
   const [AssignedBikesNumber, setAssignedBikesNumber] = useState(0);
   const [FilteredassignedDetails, setFilteredassignedDetails] = useState([]);
@@ -114,10 +115,13 @@ const BikeAvailability = ({navigation}) => {
       setRefreshing(false);
     }
   };
-
   useEffect(() => {
-    fetchData();
-  }, []);
+    const focusHandler = navigation.addListener('focus', () => {
+      fetchData();
+    });
+
+    return focusHandler;
+  }, [navigation, refreshing]);
 
   const handleSearch = query => {
     setSearchQuery(query);
@@ -214,14 +218,16 @@ const BikeAvailability = ({navigation}) => {
         if (!response.ok) {
           // Handle HTTP error codes (e.g., 404, 500) with custom error messages
           return response.json().then(data => {
-            throw new Error(data?.error || `HTTP error! Status: ${response.status}`);
+            throw new Error(
+              data?.error || `HTTP error! Status: ${response.status}`,
+            );
           });
         }
-        return response.json();  // Only parse JSON if the response is successful
+        return response.json(); // Only parse JSON if the response is successful
       })
       .then(data => {
         if (data?.message) {
-          alert(data.message);  // Show success message from response
+          alert(data.message); // Show success message from response
         } else {
           alert('Battery swap was successful but no message was returned.');
         }
@@ -230,12 +236,11 @@ const BikeAvailability = ({navigation}) => {
         console.error('Error swapping battery:', error);
         alert(`An error occurred while swapping the battery: ${error.message}`);
       });
-  
+
     setTimeout(() => {
-      onRefresh();  
+      onRefresh();
     }, 2000);
   };
-  
 
   return (
     <View style={styles.container}>
@@ -425,7 +430,7 @@ const BikeAvailability = ({navigation}) => {
                       selectedTextStyle={styles.selectedTextStyle}
                       data={batteryList}
                       search
-                      searchField='label'
+                      searchField="label"
                       itemTextStyle={{color: '#000'}}
                       placeholderTextColor="#000"
                       labelField="label"
