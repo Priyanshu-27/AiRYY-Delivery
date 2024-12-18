@@ -6,6 +6,7 @@ import {
   View,
   Dimensions,
   ScrollView,
+  Alert,
   RefreshControl,
   TouchableOpacity,
 } from 'react-native';
@@ -39,6 +40,7 @@ const MiddlePayment = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [BikeData, setBikeData] = useState([]);
   const [amount, setAmount] = useState(0);
+  const [DueAmount, setDueAmount] = useState(0);
   const [UPIMethod, setUPIMethod] = useState('QR Code');
   const [upi, setupi] = useState(false);
   const [upiChecked, setUpiChecked] = useState(false);
@@ -53,10 +55,9 @@ const MiddlePayment = () => {
     setCashChecked(false);
     setChequeChecked(false);
     setmixChecked(false);
-    setupi(''); 
-    setcash(''); 
+    setupi('');
+    setcash('');
     setcheque('');
-
   };
 
   const handleCheckboxPress = type => {
@@ -79,6 +80,7 @@ const MiddlePayment = () => {
     }
   };
   const [selectedDate, setSelectedDate] = useState(new Date());
+
   const handleSubmit = () => {
     const year = selectedDate.getFullYear();
     const month = selectedDate.getMonth() + 1;
@@ -87,15 +89,42 @@ const MiddlePayment = () => {
     const data = {
       phone: phone,
       license_plate: Bikeid,
-      Amount: amount,
+      total_amount: amount,
       UPIMethod: UPIMethod,
-      upi: upi || 0,
-      cash: cash || 0,
-      cheque: cheque || 0,
+      upi_amount: upi || 0,
+      cash_amount: cash || 0,
+      cheque_amount: cheque || 0,
+      mode_of_payment: mixChecked
+        ? 'mix'
+        : upiChecked
+        ? 'upi'
+        : cashChecked
+        ? 'cash'
+        : 'upi',
       date: formattedToday,
-      status: 'Paid in Full',
+      booking_status: 'Paid',
     };
-    console.log(data);
+   
+    fetch(`https://${DOMAIN}/Delivery/middlePayment/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        Alert.alert(
+          'Success',
+          `Payment added successfully! And Due is ${data.due_amount}`,
+        );
+        onRefresh();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        Alert.alert('Error', 'Something went wrong!');
+      });
   };
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -104,7 +133,6 @@ const MiddlePayment = () => {
     setRefreshing(false);
   }, []);
   const focusHandler = () => {
-    console.log('Fetching bike data...');
     fetch(`https://${DOMAIN}/Delivery/delivery-rental-list/`, {
       method: 'GET',
     })
@@ -114,7 +142,9 @@ const MiddlePayment = () => {
           label: item.bike.license_plate + ' - ' + item.bike.type,
           value: item.bike.license_plate,
           phone: item.user.user.phone,
+          last_due_amount: item.last_due_amount,
         }));
+       
 
         setBikeData(formattedData);
       })
@@ -144,7 +174,6 @@ const MiddlePayment = () => {
         }
         style={styles.Scroll}>
         {/* Phone Input */}
-        <Text style={styles.label}>Phone:</Text>
 
         <Dropdown
           style={styles.dropdown}
@@ -159,13 +188,17 @@ const MiddlePayment = () => {
           onChange={item => {
             setBikeid(item.value);
             setPhone(item.phone);
+            setDueAmount(item.last_due_amount);
           }}
         />
+        <Text className="mt-5" style={styles.label}>
+          Phone:
+        </Text>
         <TextInput
           style={styles.input}
           placeholder="Enter Phone Number"
           keyboardType="phone-pad"
-          value={phone}
+          value={phone ? phone + '   ---   Rs ' + DueAmount+" Due Amount" : ''}
           onChangeText={setPhone}
         />
 
@@ -285,7 +318,9 @@ const MiddlePayment = () => {
           placeholder="Enter Total Amount"
           keyboardType="numeric"
           value={amount.toString()}
-          onChangeText={(text)=>{setAmount(text)}}
+          onChangeText={text => {
+            setAmount(text);
+          }}
         />
         {/* Submit Button */}
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
