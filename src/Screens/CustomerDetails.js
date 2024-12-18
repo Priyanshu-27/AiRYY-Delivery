@@ -91,9 +91,9 @@ const CustomerDetails = () => {
       user_Gender: gender || '',
       secondary_phone: secondaryPhone || '',
       aadhar_number: aadharNumber || '',
-      licenseNumber: licenseNumber || '',
-      voterId: voterId || '',
-      PanNumber: PanNumber || '',
+      license_number: licenseNumber || '',
+      voter_id: voterId || '',
+      pan_number: PanNumber || '',
     };
 
     setIsLoading(true);
