@@ -9,11 +9,13 @@ import {
   Alert,
   ActivityIndicator,
   ToastAndroid,
+  Image
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Picker} from '@react-native-picker/picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import LinearGradient from 'react-native-linear-gradient';
 import {STATES_AND_CITIES} from '../utils/SatesCities';
 import {DOMAIN} from '@env';
 const CustomerDetails = () => {
@@ -251,22 +253,30 @@ const CustomerDetails = () => {
   return (
     <View style={styles.background}>
       {UserNotFound ? (
-        <View className="flex-1 h-full w-full justify-center bg-[#feb101] p-2 ">
+        <View className="flex-1 h-full w-full justify-center bg-[#fefce8] p-2 ">
           <ScrollView contentContainerStyle={styles.contentContainer2}>
             <View style={styles.animationContainer}>
-              <LottieView
-                style={styles.animation}
-                source={require('../assets/animation_ljzoxvdm.json')}
-                autoPlay
-                loop
+              <Image
+                source={require('../assets/Customer-verification.png')}
+                style={{width: 350, height: 250}}
+                resizeMode="cover"
               />
             </View>
-            <View
+
+            <View style={{marginTop: 30, marginBottom: 30 , backgroundColor:'#FFF' , paddingHorizontal:30 , paddingVertical:10 , borderRadius:20}}>
+              <Text style={{color:'#000' , fontWeight:'700' , }}>Delivery Boy verification.</Text>
+            </View>
+
+            <LinearGradient
+              colors={['#feb101', '#fefce8']}
+              start={{x: 0, y: 0}} // Start from the top
+              end={{x: 0, y: 1}} // End at the bottom
               style={{
                 backgroundColor: '#FFF',
                 width: '100%',
                 padding: 30,
                 borderRadius: 30,
+                // Top-right corner
               }}>
               <View
                 style={{
@@ -275,7 +285,7 @@ const CustomerDetails = () => {
                   alignItems: 'center',
                   marginBottom: 30,
                 }}>
-                <Text style={{color: 'green'}}>Count - {UserCount || 0}</Text>
+                <Text style={{color: 'green', fontWeight:'700'}}>Count - {UserCount || 0}</Text>
                 <TouchableOpacity
                   style={{
                     backgroundColor: '#FFF',
@@ -310,6 +320,7 @@ const CustomerDetails = () => {
                   style={styles.input}
                   keyboardType="phone-pad"
                   maxLength={10}
+                  placeholderTextColor="#000"
                 />
                 {phoneError ? (
                   <Text style={styles.errorText}>{phoneError}</Text>
@@ -327,25 +338,31 @@ const CustomerDetails = () => {
                   <Text style={styles.buttonText}>Verify</Text>
                 )}
               </TouchableOpacity>
-            </View>
+            </LinearGradient>
           </ScrollView>
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.contentContainer}>
-          <View style={styles.animationContainer}>
+          {/* <View style={styles.animationContainer}>
             <LottieView
               style={styles.animation}
               source={require('../assets/animation_ljzoxvdm.json')}
               autoPlay
               loop
             />
-          </View>
-          <View
+          </View> */}
+          <LinearGradient
+            colors={['#feb101', '#fefce8']}
+            start={{x: 0, y: 0}} // Start from the top
+            end={{x: 0, y: 1}} // End at the bottom
             style={{
               backgroundColor: '#FFF',
               width: '100%',
               padding: 30,
-              borderRadius: 30,
+              borderRadius: 50,
+              paddingTop: 50,
+              marginTop: 40,
+              // Top-right corner
             }}>
             <View
               style={{
@@ -354,7 +371,7 @@ const CustomerDetails = () => {
                 alignItems: 'center',
                 marginBottom: 30,
               }}>
-              <Text style={{color: 'green'}}>Count - {UserCount || 0}</Text>
+              <Text style={{color: 'green' , fontWeight:'700'}}>Count - {UserCount || 0}</Text>
               <TouchableOpacity
                 style={{
                   backgroundColor: '#FFF',
@@ -376,6 +393,7 @@ const CustomerDetails = () => {
             <View style={styles.inputContainer}>
               <Text style={styles.label}>State</Text>
               <Picker
+               
                 selectedValue={selectedState}
                 onValueChange={value => {
                   setSelectedState(value);
@@ -424,6 +442,7 @@ const CustomerDetails = () => {
                   style={styles.input}
                   keyboardType="phone-pad"
                   maxLength={10}
+                  placeholderTextColor="#000"
                   editable={false} // Make the field not editable
                 />
                 {phoneError ? (
@@ -436,6 +455,7 @@ const CustomerDetails = () => {
                   placeholder="Phone Number"
                   placeholderTextColor="#000"
                   value={phoneNumber}
+                  placeholderTextColor="#000"
                   onChangeText={text => {
                     if (text.length < 10) {
                       setonn(false);
@@ -534,6 +554,7 @@ const CustomerDetails = () => {
                 value={secondaryPhone}
                 onChangeText={setSecondaryPhone}
                 style={styles.input}
+                placeholderTextColor="#000"
                 keyboardType="phone-pad"
                 maxLength={10}
               />
@@ -547,6 +568,7 @@ const CustomerDetails = () => {
               <TextInput
                 placeholder="First Name*"
                 value={firstName}
+                placeholderTextColor="#000"
                 onChangeText={setFirstName}
                 style={styles.input}
               />
@@ -555,6 +577,7 @@ const CustomerDetails = () => {
               <TextInput
                 placeholder="Last Name*"
                 value={lastName}
+                placeholderTextColor="#000"
                 onChangeText={setLastName}
                 style={styles.input}
               />
@@ -563,6 +586,7 @@ const CustomerDetails = () => {
               <TextInput
                 placeholder="Aadhar Number*"
                 value={aadharNumber}
+                placeholderTextColor="#000"
                 onChangeText={setAadharNumber}
                 style={styles.input}
               />
@@ -573,6 +597,7 @@ const CustomerDetails = () => {
               <TextInput
                 placeholder="Email"
                 value={email}
+                placeholderTextColor="#000"
                 onChangeText={setEmail}
                 style={styles.input}
                 keyboardType="email-address"
@@ -586,6 +611,7 @@ const CustomerDetails = () => {
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Gender</Text>
               <Picker
+                
                 selectedValue={gender}
                 onValueChange={value => setGender(value)}
                 style={styles.picker}>
@@ -629,7 +655,7 @@ const CustomerDetails = () => {
                 )}
               </TouchableOpacity>
             )}
-          </View>
+          </LinearGradient>
         </ScrollView>
       )}
     </View>
@@ -637,9 +663,18 @@ const CustomerDetails = () => {
 };
 
 const styles = StyleSheet.create({
+  picker: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    color: '#000',
+  },
   background: {
     flex: 1,
-    backgroundColor: '#feb101',
+    backgroundColor: '#fefce8',
     paddingHorizontal: 20,
     paddingTop: 20,
   },
@@ -665,11 +700,14 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
-    marginBottom: 15,
+    marginBottom: 30,
+    borderRadius: 30,
   },
   inputContainer1: {
     flexDirection: 'row',
     alignItems: 'center',
+    borderRadius: 30,
+   
   },
   label: {
     fontSize: 16,

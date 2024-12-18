@@ -10,12 +10,15 @@ import {
   ActivityIndicator,
   RefreshControl,
   ToastAndroid,
+  Image
 } from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useNavigation} from '@react-navigation/native';
-import {DOMAIN} from '@env'
+import {DOMAIN} from '@env';
+
 const Checkbox = ({label, value, onPress}) => (
   <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
     <View
@@ -161,7 +164,7 @@ const DepositeDetail = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#FFF', '#facc15']} style={styles.container}>
       <View style={styles.Vcontainer}>
         <LottieView
           style={styles.video}
@@ -170,72 +173,78 @@ const DepositeDetail = () => {
           loop
         />
       </View>
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        style={styles.Scroll}>
-        <View style={styles.content}>
-          <View style={{marginBottom:40,marginTop:-60}}>
-            {BikeidError ? (
-              <Text style={styles.errorText}>{BikeidError}</Text>
-            ) : null}
-            <Dropdown
-              style={styles.dropdown}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              data={BikeData}
-              itemTextStyle={{color: '#000'}}
-              maxHeight={300}
-              labelField="label"
-              placeholder="Select Bike ID"
-              placeholderTextColor="#000"
-              onChange={item => {
-                setBikeid(item.value);
-                setPhoneNumber(item.phone)
-              }}
-            />
-          </View>
-          <View style={{marginBottom:20 ,}}>
-            <TextInput
-              style={[styles.input, phoneError && {borderColor: 'red'}]}
-              placeholder="Enter Phone Number"
-              placeholderTextColor="#000"
-              keyboardType="number-pad"
-              editable = {false}
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-            />
-            {phoneError ? (
-              <Text style={styles.errorText}>{phoneError}</Text>
-            ) : null}
-          </View>
-          <View style={styles.checkboxContainer}>
-            <Text style={styles.label}>Bike Condition:</Text>
-            <Checkbox
-              label="Good"
-              value={bikeCondition === 'good'}
-              onPress={() => handleBikeConditionChange('good')}
-            />
-            <Checkbox
-              label="Not Good"
-              value={bikeCondition === 'notgood'}
-              onPress={() => handleBikeConditionChange('notgood')}
-            />
-          </View>
-          <TouchableOpacity
-            style={styles.depositButton}
-            onPress={handleDeposit}>
-            <Text style={styles.depositButtonText}>Submit</Text>
-          </TouchableOpacity>
-          {isLoading && (
-            <View style={styles.loader}>
-              <ActivityIndicator size="large" color="#000000" />
-            </View>
-          )}
+      <View
+        style={{
+          
+          position:'absolute' ,
+          top:350 ,
+          backgroundColor: '#FFF',
+          paddingHorizontal: 30,
+          paddingVertical: 10,
+          borderRadius: 20,
+        }}>
+        <Text style={{color: '#000', fontWeight: '700' , letterSpacing:1}}>
+          Delivery Boy Bike Deposite.
+        </Text>
+      </View>
+     
+      <View style={styles.content}>
+        <View style={{marginBottom: 10, marginTop: 10}}>
+          {BikeidError ? (
+            <Text style={styles.errorText}>{BikeidError}</Text>
+          ) : null}
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            data={BikeData}
+            itemTextStyle={{color: '#000'}}
+            maxHeight={300}
+            labelField="label"
+            placeholder="Select Bike ID"
+            placeholderTextColor="#000"
+            onChange={item => {
+              setBikeid(item.value);
+            }}
+          />
         </View>
-      </ScrollView>
-    </View>
+        <View style={{marginBottom: 20}}>
+          <TextInput
+            style={[styles.input, phoneError && {borderColor: 'red'}]}
+            placeholder="Enter Phone Number"
+            placeholderTextColor="#000"
+            keyboardType="number-pad"
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+          />
+          {phoneError ? (
+            <Text style={styles.errorText}>{phoneError}</Text>
+          ) : null}
+        </View>
+        <View style={styles.checkboxContainer}>
+          <Text style={styles.label}>Bike Condition:</Text>
+          <Checkbox
+            label="Good"
+            value={bikeCondition === 'good'}
+            onPress={() => handleBikeConditionChange('good')}
+          />
+          <Checkbox
+            label="Not Good"
+            value={bikeCondition === 'notgood'}
+            onPress={() => handleBikeConditionChange('notgood')}
+          />
+        </View>
+        <TouchableOpacity style={styles.depositButton} onPress={handleDeposit}>
+          <Text style={styles.depositButtonText}>Submit</Text>
+        </TouchableOpacity>
+        {isLoading && (
+          <View style={styles.loader}>
+            <ActivityIndicator size="large" color="#000000" />
+          </View>
+        )}
+      </View>
+      {/* </ScrollView> */}
+    </LinearGradient>
   );
 };
 
@@ -271,16 +280,12 @@ const styles = StyleSheet.create({
     height: '20%',
     width: 200,
   },
-  video: {
-    width: 250,
-    height: "120%",
-    marginTop:'100%'
-  },
+
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#feb101',
+    // backgroundColor: '#feb101',
   },
   Scroll: {
     marginTop: 30,
@@ -296,7 +301,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     width: '100%',
-    height:'100%',
+    height:400 , 
     shadowColor: 'black',
     shadowOpacity: 0.5,
     shadowOffset: {width: 0, height: 2},
@@ -329,7 +334,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   depositButton: {
-    backgroundColor: '#feb101',
+    backgroundColor: '#000',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -337,7 +342,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   depositButtonText: {
-    color: '#000',
+    color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
     letterSpacing: 1,
