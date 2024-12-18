@@ -9,7 +9,7 @@ import {
   Alert,
   ActivityIndicator,
   ToastAndroid,
-  Image
+  Image,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -36,7 +36,11 @@ const CustomerDetails = () => {
   const [emailError, setEmailError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [Update, setUpdate] = useState(false);
+  const [openModel, setopenModel] = useState(false);
   const [IGotTheuser, setIGotTheuser] = useState(false);
+
+  const [licenseNumber, setLicenseNumber] = useState('');
+  const [voterId, setVoterId] = useState('');
 
   const navigation = useNavigation();
 
@@ -87,8 +91,10 @@ const CustomerDetails = () => {
       user_Gender: gender || '',
       secondary_phone: secondaryPhone || '',
       aadhar_number: aadharNumber || '',
+      licenseNumber: licenseNumber || '',
+      voterId: voterId || '',
+      PanNumber: PanNumber || '',
     };
-    console.log('da', userData);
 
     setIsLoading(true);
 
@@ -150,6 +156,7 @@ const CustomerDetails = () => {
       if (response.ok && responseData.user_phone) {
         console.log(responseData);
         setIGotTheuser(true);
+        setUpdate(true)
         setEmail(responseData.user_email);
         setAadharNumber(responseData.aadhar_number);
         setPanNumber(responseData.pan_number);
@@ -263,8 +270,18 @@ const CustomerDetails = () => {
               />
             </View>
 
-            <View style={{marginTop: 30, marginBottom: 30 , backgroundColor:'#FFF' , paddingHorizontal:30 , paddingVertical:10 , borderRadius:20}}>
-              <Text style={{color:'#000' , fontWeight:'700' , }}>Delivery Boy verification.</Text>
+            <View
+              style={{
+                marginTop: 30,
+                marginBottom: 30,
+                backgroundColor: '#FFF',
+                paddingHorizontal: 30,
+                paddingVertical: 10,
+                borderRadius: 20,
+              }}>
+              <Text style={{color: '#000', fontWeight: '700'}}>
+                Delivery Boy verification.
+              </Text>
             </View>
 
             <LinearGradient
@@ -285,22 +302,9 @@ const CustomerDetails = () => {
                   alignItems: 'center',
                   marginBottom: 30,
                 }}>
-                <Text style={{color: 'green', fontWeight:'700'}}>Count - {UserCount || 0}</Text>
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: '#FFF',
-                    paddingHorizontal: 10,
-                    paddingVertical: 5,
-                    borderRadius: 30,
-                    elevation: 2, // For Android
-                    shadowColor: '#000', // For iOS
-                    shadowOffset: {width: 0, height: 2}, // For iOS
-                    shadowOpacity: 0.25, // For iOS
-                    shadowRadius: 3.84, // For iOS
-                  }}
-                  onPress={() => setUpdate(prev => !prev)}>
-                  <Text style={{color: '#000'}}>Update Doc.</Text>
-                </TouchableOpacity>
+                <Text style={{color: 'green', fontWeight: '700'}}>
+                  Count - {UserCount || 0}
+                </Text>
               </View>
 
               {/* Phone Number */}
@@ -371,7 +375,9 @@ const CustomerDetails = () => {
                 alignItems: 'center',
                 marginBottom: 30,
               }}>
-              <Text style={{color: 'green' , fontWeight:'700'}}>Count - {UserCount || 0}</Text>
+              <Text style={{color: 'green', fontWeight: '700'}}>
+                Count - {UserCount || 0}
+              </Text>
               <TouchableOpacity
                 style={{
                   backgroundColor: '#FFF',
@@ -384,7 +390,10 @@ const CustomerDetails = () => {
                   shadowOpacity: 0.25, // For iOS
                   shadowRadius: 3.84, // For iOS
                 }}
-                onPress={() => setUpdate(prev => !prev)}>
+                onPress={() => {
+                  setUpdate(prev => !prev);
+                  setopenModel(prev => !prev);
+                }}>
                 <Text style={{color: '#000'}}>Update Doc.</Text>
               </TouchableOpacity>
             </View>
@@ -393,7 +402,6 @@ const CustomerDetails = () => {
             <View style={styles.inputContainer}>
               <Text style={styles.label}>State</Text>
               <Picker
-               
                 selectedValue={selectedState}
                 onValueChange={value => {
                   setSelectedState(value);
@@ -455,7 +463,6 @@ const CustomerDetails = () => {
                   placeholder="Phone Number"
                   placeholderTextColor="#000"
                   value={phoneNumber}
-                  placeholderTextColor="#000"
                   onChangeText={text => {
                     if (text.length < 10) {
                       setonn(false);
@@ -611,7 +618,6 @@ const CustomerDetails = () => {
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Gender</Text>
               <Picker
-                
                 selectedValue={gender}
                 onValueChange={value => setGender(value)}
                 style={styles.picker}>
@@ -622,7 +628,7 @@ const CustomerDetails = () => {
               </Picker>
             </View>
 
-            {IGotTheuser ? (
+            {IGotTheuser && Update ? (
               <TouchableOpacity
                 style={styles.button}
                 onPress={() => {
@@ -656,6 +662,43 @@ const CustomerDetails = () => {
               </TouchableOpacity>
             )}
           </LinearGradient>
+          {openModel ? (
+            <View style={styles.overlay}>
+              <View style={styles.modalContainer}>
+                <Text style={styles.modalTitle}>Please Enter Your Details</Text>
+
+                <TextInput
+                  placeholder="Voter Id Number"
+                  style={styles.input3}
+                  value={voterId}
+                  onChangeText={text => setVoterId(text)}
+                />
+
+                <TextInput
+                  placeholder="Licence Number"
+                  style={styles.input3}
+                  value={licenseNumber}
+                  onChangeText={text => setLicenseNumber(text)}
+                />
+
+                <TextInput
+                  placeholder="Pan Number"
+                  style={styles.input3}
+                  value={PanNumber}
+                  onChangeText={text => setPanNumber(text)}
+                />
+
+                <TouchableOpacity
+                  style={styles.button2}
+                  onPress={() => {
+                    
+                    setopenModel(prevState => !prevState);
+                  }}>
+                  <Text style={styles.buttonText2}>Done</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : null}
         </ScrollView>
       )}
     </View>
@@ -707,7 +750,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 30,
-   
   },
   label: {
     fontSize: 16,
@@ -758,6 +800,57 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 10,
     top: 10,
+  },
+
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 100, // Ensures it's on top
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    width: '90%',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5, // For Android shadow
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  input3: {
+    width: '100%',
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+  },
+  button2: {
+    backgroundColor: '#007BFF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  buttonText2: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
