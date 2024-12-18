@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import {DOMAIN} from '@env';
 import {useDispatch} from 'react-redux';
+import LinearGradient from 'react-native-linear-gradient';
 import {login} from '../Redux/Counter/counterAction';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
@@ -130,107 +131,134 @@ const LoginScreen = () => {
   const {height} = Dimensions.get('window');
   const containerHeight = height;
 
-  return (
-    <ScrollView
-      contentContainerStyle={styles.scrollContainer}
-      keyboardShouldPersistTaps="handled">
-      <View style={[styles.container, {height: containerHeight}]}>
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: 'bold',
-            color: '#000',
-            marginBottom: 10,
-            marginTop: -30,
-          }}>
-          AiRYY Delivery
-        </Text>
-        <Text style={styles.loginText}>Login for our Super Heroes</Text>
-        <Image
-          source={require('../assets/newLogin.png')}
-          style={styles.image}
-        />
-        {!isPhoneNumberValid && isFormSubmitted && (
-          <Text style={styles.errorText}>
-            Please enter a valid phone number
-          </Text>
-        )}
-        <TextInput
-          style={[
-            styles.input,
-            !isPhoneNumberValid && isFormSubmitted && styles.invalidInput,
-          ]}
-          placeholder="Phone Number"
-          placeholderTextColor="#000"
-          keyboardType="numeric"
-          value={phoneNumber}
-          onChangeText={text => {
-            setPhoneNumber(text);
-            setIsPhoneNumberValid(text.length === 10);
-          }}
-          placeholderStyle={styles.placeholderText}
-        />
-        {!isNameValid && isFormSubmitted && (
-          <Text style={styles.errorText}>Please enter your name</Text>
-        )}
-        <TextInput
-          style={[
-            styles.input,
-            !isNameValid && isFormSubmitted && styles.invalidInput,
-          ]}
-          placeholder="Name"
-          placeholderTextColor="#000"
-          value={Name}
-          onChangeText={text => {
-            setName(text);
-            setIsNameValid(text.trim().length > 0);
-          }}
-          placeholderStyle={styles.placeholderText}
-        />
-        {!isPasswordValid && isFormSubmitted && (
-          <Text style={styles.errorText}>Please enter valid Password</Text>
-        )}
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={[
-              styles.input,
-              !isPasswordValid && isFormSubmitted && styles.invalidInput,
-            ]}
-            placeholder="Password"
-            placeholderTextColor="#000"
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={text => {
-              setPassword(text);
-              setIsPasswordValid(text.trim().length > 0);
-            }}
-            placeholderStyle={styles.placeholderText}
-          />
+ return (
+   <ScrollView
+     contentContainerStyle={styles.scrollContainer}
+     keyboardShouldPersistTaps="handled">
+     <LinearGradient colors={['#facc15', '#FFF']} style={styles.linearGradient}>
+       <View style={[styles.container, {height: containerHeight}]}>
+         <LinearGradient
+           colors={['#f8d75d', '#243757']}
+           start={{x: 0, y: 0}}
+           end={{x: 1, y: 0}}
+           style={{
+             paddingHorizontal: 30,
+             paddingVertical: 10,
+             borderTopLeftRadius: 50, // Top-left corner
+             borderBottomLeftRadius: 50, // Bottom-left corner
+             borderTopRightRadius: 50,
+             //  borderRadius: 10,
+             marginTop: -30,
+           }}>
+           <Text
+             style={{
+               fontSize: 20,
+               fontWeight: 'bold',
+               color: '#FFF',
+               marginBottom: 10,
+               letterSpacing: 1,
+             }}>
+             AiRYY DELIVERY.
+           </Text>
+         </LinearGradient>
 
-          <TouchableOpacity
-            style={styles.passwordVisibilityToggle}
-            onPress={togglePasswordVisibility}>
-            <Ionicons
-              name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-              size={24}
-              color="#000"
-            />
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        {isLoading && (
-          <View style={styles.loader}>
-            <ActivityIndicator size="large" color="#000000" />
-          </View>
-        )}
-      </View>
-    </ScrollView>
-  );
-};
+         <View
+           style={{
+             width: '100%',
+             justifyContent: 'center',
+             alignItems: 'center',
+           }}>
+           <Image
+             source={require('../assets/finalLogin.png')}
+             style={styles.image}
+             resizeMode="cover"
+           />
+         </View>
+
+         {!isPhoneNumberValid && isFormSubmitted && (
+           <Text style={styles.errorText}>
+             Please enter a valid phone number
+           </Text>
+         )}
+         <TextInput
+           style={[
+             styles.input,
+             !isPhoneNumberValid && isFormSubmitted && styles.invalidInput,
+           ]}
+           placeholder="Phone Number"
+           placeholderTextColor="#000"
+           keyboardType="numeric"
+           value={phoneNumber}
+           onChangeText={text => {
+             setPhoneNumber(text);
+             setIsPhoneNumberValid(text.length === 10);
+           }}
+           placeholderStyle={styles.placeholderText}
+         />
+         {!isNameValid && isFormSubmitted && (
+           <Text style={styles.errorText}>Please enter your name</Text>
+         )}
+         <TextInput
+           style={[
+             styles.input,
+             !isNameValid && isFormSubmitted && styles.invalidInput,
+           ]}
+           placeholder="Name"
+           placeholderTextColor="#000"
+           value={Name}
+           onChangeText={text => {
+             setName(text);
+             setIsNameValid(text.trim().length > 0);
+           }}
+           placeholderStyle={styles.placeholderText}
+         />
+         {!isPasswordValid && isFormSubmitted && (
+           <Text style={styles.errorText}>Please enter valid Password</Text>
+         )}
+         <View style={styles.passwordContainer}>
+           <TextInput
+             style={[
+               styles.input,
+               !isPasswordValid && isFormSubmitted && styles.invalidInput,
+             ]}
+             placeholder="Password"
+             placeholderTextColor="#000"
+             secureTextEntry={!showPassword}
+             value={password}
+             onChangeText={text => {
+               setPassword(text);
+               setIsPasswordValid(text.trim().length > 0);
+             }}
+             placeholderStyle={styles.placeholderText}
+           />
+
+           <TouchableOpacity
+             style={styles.passwordVisibilityToggle}
+             onPress={togglePasswordVisibility}>
+             <Ionicons
+               name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+               size={24}
+               color="#000"
+             />
+           </TouchableOpacity>
+         </View>
+         <TouchableOpacity style={styles.button} onPress={handleLogin}>
+           <Text style={styles.buttonText}>Login</Text>
+         </TouchableOpacity>
+         {isLoading && (
+           <View style={styles.loader}>
+             <ActivityIndicator size="large" color="#000000" />
+           </View>
+         )}
+       </View>
+     </LinearGradient>
+   </ScrollView>
+ );}
 
 const styles = StyleSheet.create({
+  linearGradient: {
+    flex: 1,
+  },
   loader: {
     position: 'absolute',
     top: 0,
@@ -256,12 +284,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
-    // backgroundColor: '#feb101',
   },
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
-    backgroundColor: '#feb101',
   },
   loginText: {
     color: 'black',
@@ -270,12 +295,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   image: {
-    width: 200,
-    height: 400,
-    marginBottom: 20,
-    marginTop: 0,
+    width:300 ,
+    height: 300,
+    marginBottom: 50,
+    
+    marginTop: 50,
+    
   },
-
   input: {
     width: '100%',
     height: 40,
@@ -286,7 +312,7 @@ const styles = StyleSheet.create({
     color: '#000',
     shadowColor: 'black',
     shadowOpacity: 0.5,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 6,
   },
