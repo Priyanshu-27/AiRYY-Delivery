@@ -6,23 +6,15 @@ import {
   TextInput,
   StyleSheet,
   ScrollView,
-  ImageBackground,
-  Image,
   Alert,
   ActivityIndicator,
   RefreshControl,
+  ToastAndroid,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import {DOMAIN} from '@env';
 import {Dropdown} from 'react-native-element-dropdown';
-// import opencamera from '../components/opencamera';
 import {useNavigation} from '@react-navigation/native';
-import {useRoute} from '@react-navigation/core';
-import { useSelector } from 'react-redux';
-
-// import {launchCamera} from 'react-native-image-picker';
-// import RNFS from 'react-native-fs';
 
 const Checkbox = ({label, value, onPress}) => (
   <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
@@ -40,178 +32,131 @@ const Checkbox = ({label, value, onPress}) => (
 const DepositeDetail = () => {
   const [bikeCondition, setBikeCondition] = useState('good');
   const [refreshing, setRefreshing] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [Kilometer, setKilometer] = useState('');
-  const route = useRoute();
-    
-
-  useEffect(() => {
-    if (route.params && route.params.bid) {
-      setBikeid(route.params.bid);
-    } else {
-      setBikeid('');
-    }
-  }, [route.params, BikeData, navigation]);
   const [Bikeid, setBikeid] = useState('');
-  const phone = useSelector(state => state.counter.phone);
-  const [Bikeiderror, setBikeiderror] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
-  const navigation = useNavigation();
-  const [kilometerError, setKilometerError] = useState('');
-  const [imageError, setImageError] = useState('');
+  const [BikeidError, setBikeidError] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState(null);
   const [BikeData, setBikeData] = useState([]);
+  const navigation = useNavigation();
+
   const focusHandler = () => {
-    console.log("API called");
-    fetch(`https://${DOMAIN}/Bike/Bikeidsreturn/`, {
-      method: 'GET',
-    })
+    console.log('Fetching bike data...');
+    fetch(
+      'http://airyy-backend-three.vercel.app/Delivery_Bikes/delivery-bikes-list/',
+      {
+        method: 'GET',
+      },
+    )
       .then(response => response.json())
       .then(responseJson => {
-        setBikeData(responseJson);
-        if (responseJson.length > 0) {
-          setValue(responseJson[0].value);
+        const formattedData = responseJson.map(item => ({
+          label: item.license_plate,
+          value: item.license_plate,
+        }));
+        setBikeData(formattedData);
+        if (formattedData.length > 0) {
+          setValue(formattedData[0].value);
         }
       })
       .catch(error => {
-        console.log(error);
+        console.error('Error fetching bike data:', error);
       });
   };
-  
+
   useFocusEffect(
     React.useCallback(() => {
       focusHandler();
-    }, [])
+    }, []),
   );
-  
+
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    focusHandler(); 
-    setRefreshing(false); 
+    focusHandler();
+    setRefreshing(false);
   }, []);
-
 
   const handleBikeConditionChange = condition => {
     setBikeCondition(condition);
   };
 
+  const validateFields = () => {
+    let valid = true;
 
-  const handleImageSelect2 = async () => {
-    try {
-      const result = await opencamera(phoneNumber, '_Adhar_Card.jpg');
-      if (result) {
-        setSelectedImage(result.path);
-        setImageError('');
-      } else {
-        Alert.alert('Error', 'Failed to capture Image');
-      }
-    } catch (error) {
-      console.log('Camera error: ', error);
-      Alert.alert('Error', 'An unexpected error occurred while capturing the image.');
+    if (!Bikeid) {
+      setBikeidError('Please choose a Bike ID');
+      valid = false;
+    } else {
+      setBikeidError('');
     }
+
+    if (!phoneNumber) {
+      setPhoneError('Please enter your phone number');
+      valid = false;
+    } else if (!/^[0-9]{10}$/.test(phoneNumber)) {
+      setPhoneError('Invalid phone number');
+      valid = false;
+    } else {
+      setPhoneError('');
+    }
+
+    return valid;
   };
 
-  // Function to create FormData object
-  const createImageFormData = (imagePath, phoneNumber) => {
-    const formData = new FormData();
-    formData.append('Condition', bikeCondition);
-    formData.append('KM_Now', Kilometer);
-
-    formData.append('Bikeid', Bikeid);
-    formData.append('staff', phone);
-
-    if (imagePath) {
-      formData.append('Pic_after', {
-        uri: imagePath,
-        type: 'image/jpeg',
-        name: `${phoneNumber}_After_Pic.jpg`,
-      });
-    }
-
-    return formData;
+  const showToast = message => {
+    ToastAndroid.show(message, ToastAndroid.SHORT);
   };
 
   const handleDeposit = () => {
     if (!validateFields()) {
-      Alert.alert('Error', 'Fill All The Fields Again');
-      setSelectedImage(null);
+      Alert.alert('Error', 'Please fill all the fields');
       return;
     }
 
     setIsLoading(true);
 
-    const formData = createImageFormData(selectedImage, phoneNumber);
+    const bodyData = {
+      phone: phoneNumber,
+      license_plate: Bikeid,
+      condition: bikeCondition,
+    };
 
-    fetch(`https://${DOMAIN}/Bike/deassign_bike/`, {
-      method: 'PUT',
-      body: formData,
-    })
+    console.log(bodyData);
+
+    fetch(
+      'http://airyy-backend-three.vercel.app/Delivery/delivery-rental/deposite/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bodyData),
+      },
+    )
       .then(response => response.json())
       .then(responseJson => {
         setIsLoading(false);
         if (responseJson.message) {
-          Alert.alert('Done', `${responseJson.message}`, [
-            {
-              text: 'OK',
-              onPress: () => {
-                navigation.navigate('Offers', {
-                  b_id: Bikeid,
-                  bikeCondition: bikeCondition,
-                  car:false
-                });
-              },
-            },
-          ]);
+          showToast('Bike successfully deposited!');
+          navigation.navigate('Offers', {
+            b_id: Bikeid,
+            bikeCondition: bikeCondition,
+            car: false,
+          });
         } else {
-          handleResponseErrors(responseJson);
+          Alert.alert(
+            'Error',
+            responseJson.Error || 'An unknown error occurred.',
+          );
         }
       })
       .catch(error => {
-        console.error('Submission error: ', error);
+        console.error('Error during submission:', error);
         Alert.alert('Error', 'Failed to submit, please try again.');
         setIsLoading(false);
       });
   };
-
-  const handleResponseErrors = (responseJson) => {
-    if (responseJson.Error) {
-      Alert.alert('Error', responseJson.Error);
-    } else if (responseJson.Error2) {
-      Alert.alert('Error', responseJson.Error2);
-      setSelectedImage(null);
-    } else {
-      Alert.alert('Error', 'An unknown error occurred.');
-    }
-  };
-
-  const validateFields = () => {
-    let isValid = true;
-
-    if (!Kilometer) {
-      setKilometerError('Please enter kilometers');
-      isValid = false;
-    } else {
-      setKilometerError('');
-    }
-
-    if (!selectedImage) {
-      setImageError('Please upload bike reading image');
-      isValid = false;
-    } else {
-      setImageError('');
-    }
-
-    if (!Bikeid) {
-      setBikeiderror('Please choose BikeID');
-      isValid = false;
-    } else {
-      setBikeiderror('');
-    }
-
-    return isValid;
-  };
-  
 
   return (
     <View style={styles.container}>
@@ -229,9 +174,9 @@ const DepositeDetail = () => {
         }
         style={styles.Scroll}>
         <View style={styles.content}>
-          <View style={styles.inputContainer}>
-            {Bikeiderror ? (
-              <Text style={styles.errorText}>{Bikeiderror}</Text>
+          <View style={{marginBottom:10 , marginTop:10}}>
+            {BikeidError ? (
+              <Text style={styles.errorText}>{BikeidError}</Text>
             ) : null}
             <Dropdown
               style={styles.dropdown}
@@ -244,10 +189,22 @@ const DepositeDetail = () => {
               placeholder="Select Bike ID"
               placeholderTextColor="#000"
               onChange={item => {
-                const selectedBikeId = item.label.split(' -   ')[0];
-                setBikeid(selectedBikeId);
+                setBikeid(item.value);
               }}
             />
+          </View>
+          <View style={{marginBottom:20 ,}}>
+            <TextInput
+              style={[styles.input, phoneError && {borderColor: 'red'}]}
+              placeholder="Enter Phone Number"
+              placeholderTextColor="#000"
+              keyboardType="number-pad"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+            />
+            {phoneError ? (
+              <Text style={styles.errorText}>{phoneError}</Text>
+            ) : null}
           </View>
           <View style={styles.checkboxContainer}>
             <Text style={styles.label}>Bike Condition:</Text>
@@ -262,39 +219,6 @@ const DepositeDetail = () => {
               onPress={() => handleBikeConditionChange('notgood')}
             />
           </View>
-          {imageError ? (
-            <Text style={styles.errorText}>{imageError}</Text>
-          ) : null}
-          <TouchableOpacity
-            style={styles.cameraButton}
-            onPress={handleImageSelect2}>
-            <Text style={styles.cameraButtonText}>
-              Upload Bike Reading Image
-            </Text>
-          </TouchableOpacity>
-
-          {selectedImage && (
-            <View style={styles.imageContainer}>
-              <Image source={{uri: selectedImage}} style={styles.image} />
-              <Text style={{color: 'green', marginTop: 5, fontWeight: '600'}}>
-                Bike Reading Deposit time
-              </Text>
-            </View>
-          )}
-
-          <Text style={styles.label}>Kilometers Now:</Text>
-          <TextInput
-            style={styles.input2}
-            placeholder="Enter Kilometer"
-            placeholderTextColor="#000"
-            value={Kilometer}
-            onChangeText={text => setKilometer(text)}
-            keyboardType="numeric"
-          />
-          {kilometerError ? (
-            <Text style={styles.errorText}>{kilometerError}</Text>
-          ) : null}
-
           <TouchableOpacity
             style={styles.depositButton}
             onPress={handleDeposit}>
@@ -333,7 +257,6 @@ const styles = StyleSheet.create({
     paddingLeft: 7,
     paddingRight: 15,
   },
-
   placeholderStyle: {
     fontSize: 15,
     color: '#000',
@@ -365,10 +288,13 @@ const styles = StyleSheet.create({
   Scroll: {
     marginTop: 30,
     width: '100%',
+    flex: 1,
   },
   content: {
     backgroundColor: '#fff',
-    padding: 20,
+    // paddingVertical: 80,
+    paddingBottom:80 ,
+    paddingHorizontal: 20,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     width: '100%',
@@ -403,51 +329,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: 'black',
   },
-  cameraButton: {
-    backgroundColor: '#feb101',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginBottom: 20,
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  cameraButtonText: {
-    color: '#000',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  imageContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  image: {
-    width: 300,
-    height: 190,
-    borderRadius: 5,
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    color: '#000',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    height: 40,
-    marginTop: 20,
-  },
-  input2: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    marginBottom: 15,
-    color: '#000',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    height: 40,
-    marginTop: 20,
-  },
   depositButton: {
     backgroundColor: '#feb101',
     paddingVertical: 10,
@@ -467,6 +348,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 5,
     marginLeft: 5,
+  },
+  input: {
+    height: 50,
+    borderColor: '#000',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    fontSize: 15,
+    marginBottom: 10,
+    marginTop: 12,
+    color: '#000',
   },
 });
 
