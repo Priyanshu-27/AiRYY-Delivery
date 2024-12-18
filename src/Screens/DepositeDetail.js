@@ -15,7 +15,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useNavigation} from '@react-navigation/native';
-
+import {DOMAIN} from '@env'
 const Checkbox = ({label, value, onPress}) => (
   <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
     <View
@@ -44,7 +44,7 @@ const DepositeDetail = () => {
   const focusHandler = () => {
     console.log('Fetching bike data...');
     fetch(
-      'http://airyy-backend-three.vercel.app/Delivery_Bikes/delivery-bikes-list/',
+      `https://${DOMAIN}/Delivery/delivery-rental-list/`,
       {
         method: 'GET',
       },
@@ -52,9 +52,11 @@ const DepositeDetail = () => {
       .then(response => response.json())
       .then(responseJson => {
         const formattedData = responseJson.map(item => ({
-          label: item.license_plate,
-          value: item.license_plate,
+          label: item.bike.license_plate + ' - ' + item.bike.type,
+          value: item.bike.license_plate,
+          phone:  item.user.user.phone
         }));
+        
         setBikeData(formattedData);
         if (formattedData.length > 0) {
           setValue(formattedData[0].value);
@@ -74,6 +76,7 @@ const DepositeDetail = () => {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     focusHandler();
+    setPhoneNumber("")
     setRefreshing(false);
   }, []);
 
@@ -125,7 +128,7 @@ const DepositeDetail = () => {
     console.log(bodyData);
 
     fetch(
-      'http://airyy-backend-three.vercel.app/Delivery/delivery-rental/deposite/',
+      `https://${DOMAIN}/Delivery/delivery-rental/deposite/`,
       {
         method: 'POST',
         headers: {
@@ -139,10 +142,9 @@ const DepositeDetail = () => {
         setIsLoading(false);
         if (responseJson.message) {
           showToast('Bike successfully deposited!');
-          navigation.navigate('Offers', {
+          navigation.navigate('UserBill', {
             b_id: Bikeid,
             bikeCondition: bikeCondition,
-            car: false,
           });
         } else {
           Alert.alert(
@@ -163,7 +165,7 @@ const DepositeDetail = () => {
       <View style={styles.Vcontainer}>
         <LottieView
           style={styles.video}
-          source={require('../assets/DepositeBikeAnime.json')} // Replace with your animation file path
+          source={require('../assets/DepositeBikeAnime.json')} 
           autoPlay
           loop
         />
@@ -174,7 +176,7 @@ const DepositeDetail = () => {
         }
         style={styles.Scroll}>
         <View style={styles.content}>
-          <View style={{marginBottom:10 , marginTop:10}}>
+          <View style={{marginBottom:40,marginTop:-60}}>
             {BikeidError ? (
               <Text style={styles.errorText}>{BikeidError}</Text>
             ) : null}
@@ -190,6 +192,7 @@ const DepositeDetail = () => {
               placeholderTextColor="#000"
               onChange={item => {
                 setBikeid(item.value);
+                setPhoneNumber(item.phone)
               }}
             />
           </View>
@@ -199,6 +202,7 @@ const DepositeDetail = () => {
               placeholder="Enter Phone Number"
               placeholderTextColor="#000"
               keyboardType="number-pad"
+              editable = {false}
               value={phoneNumber}
               onChangeText={setPhoneNumber}
             />
@@ -237,13 +241,8 @@ const DepositeDetail = () => {
 
 const styles = StyleSheet.create({
   loader: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'end',
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
   },
   dropdown: {
@@ -266,21 +265,19 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   Vcontainer: {
-    flex: 1,
+   
     justifyContent: 'center',
     alignItems: 'center',
-    height: 200,
+    height: '20%',
     width: 200,
-    marginTop: 170,
-    marginBottom: 30,
   },
   video: {
     width: 250,
-    height: 230,
+    height: "120%",
+    marginTop:'100%'
   },
   container: {
     flex: 1,
-    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#feb101',
@@ -288,6 +285,7 @@ const styles = StyleSheet.create({
   Scroll: {
     marginTop: 30,
     width: '100%',
+    height:'100%',
     flex: 1,
   },
   content: {
@@ -298,12 +296,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     width: '100%',
+    height:'100%',
     shadowColor: 'black',
     shadowOpacity: 0.5,
     shadowOffset: {width: 0, height: 2},
     shadowRadius: 4,
     elevation: 6,
-    marginTop: 120,
+    marginTop: 180,
     justifyContent: 'center',
   },
   checkboxContainer: {

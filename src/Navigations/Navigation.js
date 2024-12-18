@@ -9,6 +9,7 @@ import DepositeDetail from '../Screens/DepositeDetail';
 import Emergency from '../Screens/Emergency';
 import BikeAvailability from '../Screens/BikeAvailability';
 import VehicleDetails from '../Screens/VahicleDetails';
+import UserBill from '../Screens/UserBill';
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
@@ -25,6 +26,7 @@ const Navigation = () => {
             <Stack.Screen name="Emergency" component={Emergency} />
             <Stack.Screen name="BikeAvailibility" component={BikeAvailability} />
             <Stack.Screen name="VehicleDetails" component={VehicleDetails} />
+            <Stack.Screen name="UserBill" component={UserBill} />
                       
           </>
         ) : (
