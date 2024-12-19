@@ -35,31 +35,31 @@ const Checkbox = ({text, value, onPress}) => {
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const MiddlePayment = () => {
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState(null);
   const [Bikeid, setBikeid] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [BikeData, setBikeData] = useState([]);
   const [amount, setAmount] = useState(0);
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const [DueAmount, setDueAmount] = useState(0);
   const [UPIMethod, setUPIMethod] = useState('QR Code');
-  const [upi, setupi] = useState(false);
+  const [upi, setupi] = useState(null);
   const [upiChecked, setUpiChecked] = useState(false);
-  const [cash, setcash] = useState(false);
+  const [cash, setcash] = useState(null);
   const [cashChecked, setCashChecked] = useState(false);
-  const [cheque, setcheque] = useState(false);
+  const [cheque, setcheque] = useState(null);
   const [chequeChecked, setChequeChecked] = useState(false);
-  const [mixChecked, setmixChecked] = useState(false);
+  const [mixChecked, setmixChecked] = useState(null);
 
   const resetPaymentMethods = () => {
     setUpiChecked(false);
     setCashChecked(false);
     setChequeChecked(false);
     setmixChecked(false);
-    setupi('');
-    setcash('');
-    setcheque('');
+    setupi(null);
+    setcash(null);
+    setcheque(null);
   };
 
   const handleCheckboxPress = type => {
@@ -106,7 +106,7 @@ const MiddlePayment = () => {
       date: formattedToday,
       booking_status: 'Paid',
     };
-   
+
     fetch(`https://${DOMAIN}/Delivery/middlePayment/`, {
       method: 'POST',
       headers: {
@@ -137,7 +137,7 @@ const MiddlePayment = () => {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     focusHandler();
-    setPhone('');
+    setPhone(null);
     setRefreshing(false);
   }, []);
   const focusHandler = () => {
@@ -152,7 +152,6 @@ const MiddlePayment = () => {
           phone: item.user.user.phone,
           last_due_amount: item.last_due_amount,
         }));
-       
 
         setBikeData(formattedData);
       })
@@ -198,13 +197,13 @@ const MiddlePayment = () => {
             borderRadius: 30,
           }}>
           <Text style={styles.label}>Select Date</Text>
-          <View style={styles.DatePickerContainer}>
+          <View className="text-black" style={{color: '#000'}}>
             <DatePicker
+              theme="light"
               mode="date"
+              dividerColor={'#F7DC6F'}
               date={selectedDate}
               onDateChange={setSelectedDate}
-              androidVariant="nativeAndroid"
-              textColor="#000"
             />
           </View>
         </View>
@@ -238,19 +237,23 @@ const MiddlePayment = () => {
             Phone:
           </Text>
           <TextInput
+            className="placeholder:text-black text-black"
             style={styles.input}
             placeholderTextColor={'#000'}
-            placeholder="Enter Phone Number"
+            editable={false}
+            placeholder="Phone Number Will Appere Here"
             keyboardType="phone-pad"
             value={
-              phone ? phone + '   ---   Rs ' + DueAmount + ' Due Amount' : ''
+              phone
+                ? phone + '   ---   Rs ' + DueAmount + ' Due Amount'
+                : 'Phone Number Will Appere Here'
             }
-            onChangeText={setPhone}
           />
         </View>
 
         {/* Total Amount Input */}
         <View
+          className="placeholder:text-black text-black"
           style={{
             backgroundColor: '#FFF',
             padding: 20,
@@ -290,9 +293,12 @@ const MiddlePayment = () => {
           </View>
           <View>
             {upiChecked && (
-              <View className="mt-10 mb-[-30]" style={styles.inputContainer}>
+              <View
+                className="mt-10 mb-[-30] text-black placeholder:text-black"
+                style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor="#000"
                   placeholder="Enter UPI Amount"
                   keyboardType="numeric"
                   value={upi}
@@ -306,6 +312,7 @@ const MiddlePayment = () => {
               <View className="mt-10 mb-[-30]" style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor="#000"
                   placeholder="Enter Cash Amount"
                   keyboardType="numeric"
                   value={cash}
@@ -319,6 +326,7 @@ const MiddlePayment = () => {
               <View className="mt-10 mb-[-30]" style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor="#000"
                   placeholder="Enter Cheque Amount"
                   keyboardType="numeric"
                   value={cheque}
@@ -332,6 +340,7 @@ const MiddlePayment = () => {
               <View className="mt-10 mb-[-30]" style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor="#000"
                   placeholder="Enter UPI Amount"
                   keyboardType="numeric"
                   value={upi}
@@ -341,6 +350,7 @@ const MiddlePayment = () => {
                 />
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor="#000"
                   placeholder="Enter Cash Amount"
                   keyboardType="numeric"
                   value={cash}
@@ -416,6 +426,8 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
+    color: 'black',
+    placeholderColor: 'black',
     borderRadius: 5,
     padding: 10,
     marginBottom: 15,
@@ -450,5 +462,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-
 });

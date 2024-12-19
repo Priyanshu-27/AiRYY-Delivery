@@ -251,6 +251,7 @@ const BikeAvailability = ({navigation}) => {
           </TouchableOpacity>
           <TextInput
             style={styles.searchInput}
+            placeholderTextColor={'#000'}
             placeholder="Search..."
             value={searchQuery}
             onChangeText={handleSearch}
@@ -285,7 +286,7 @@ const BikeAvailability = ({navigation}) => {
                 justifyContent: 'space-evenly',
                 marginTop: 20,
               }}>
-              <Text>{15 - AssignedBikesNumber}</Text>
+              <Text className='text-black'>{15 - AssignedBikesNumber}</Text>
             </View>
           </View>
           <View style={[styles.summaryCard, styles.AssignedDetailsd]}>
@@ -309,7 +310,7 @@ const BikeAvailability = ({navigation}) => {
                 justifyContent: 'space-evenly',
                 marginTop: 20,
               }}>
-              <Text>{AssignedBikesNumber}</Text>
+              <Text className='text-black'>{AssignedBikesNumber}</Text>
             </View>
           </View>
         </View>

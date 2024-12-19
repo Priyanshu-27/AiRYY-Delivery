@@ -482,6 +482,7 @@ const CustomerDetails = () => {
               <Text style={styles.label}>State</Text>
               <Picker
                 selectedValue={selectedState}
+                
                 onValueChange={value => {
                   setSelectedState(value);
                   setSelectedCity('');
@@ -748,15 +749,7 @@ const CustomerDetails = () => {
 };
 
 const styles = StyleSheet.create({
-  picker: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    backgroundColor: '#fff',
-    color: '#000',
-  },
+ 
 
   contentContainer: {
     alignItems: 'center',
@@ -815,8 +808,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   picker: {
-    height: 40,
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    placeholderTextColor:'#000',
+    borderRadius: 5,
+    paddingHorizontal: 10,
     backgroundColor: '#fff',
+    color: '#000',
   },
   button: {
     backgroundColor: '#000',
