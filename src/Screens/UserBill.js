@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
 const UserBill = ({ route, navigation }) => {
@@ -16,16 +16,17 @@ const UserBill = ({ route, navigation }) => {
 
   
   const fetchRentalData = async () => {
-    try {
-      const response = await fetch(`http://${DOMAIN}/Delivery/lastPayment/?rental_id=${rental_id}`);
-      const data = await response.json();
-      setRentalData(data);
-      setdepositeDetails(data.deposit);
-      setpaymentDetails(data.payments);
-      setDueAmount(data.payments[data.payments.length - 1].due_amount);
-    } catch (error) {
-      console.error('Error fetching rental data:', error);
-    }
+    console.log(rental_id);
+    // try {
+    //   const response = await fetch(`http://${DOMAIN}/Delivery/lastPayment/?rental_id=${rental_id}`);
+    //   const data = await response.json();
+    //   setRentalData(data);
+    //   setdepositeDetails(data.deposit);
+    //   setpaymentDetails(data.payments);
+    //   setDueAmount(data.payments[data.payments.length - 1].due_amount);
+    // } catch (error) {
+    //   console.error('Error fetching rental data:', error);
+    // }
   };
 
   useEffect(() => {
@@ -54,46 +55,51 @@ const UserBill = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Bill Details</Text>
-
-      {/* Rental Details */}
-      <Text style={styles.label}>Rental Date: {new Date(rentalData.rental_date).toLocaleDateString()}</Text>
-      <Text style={styles.label}>Due Amount: ₹{dueAmount}</Text>
-      <Text style={styles.label}>Bike: {rentalData.bike}</Text>
-      
-      {/* Deposit Details */}
-      <Text style={styles.header}>Deposit Details</Text>
-      {rentalData.deposits.map((deposit, index) => (
-        <Text key={index} style={styles.label}>
-          {deposit.date}: ₹{deposit.deposit_amount} ({deposit.reason})
-        </Text>
-      ))}
-
-      {/* Payment Input */}
-      <Text style={styles.header}>Payment Breakdown</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="UPI Amount"
-        keyboardType="numeric"
-        onChangeText={(text) => setUpiAmount(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Cash Amount"
-        keyboardType="numeric"
-        onChangeText={(text) => setCashAmount(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Cheque Amount"
-        keyboardType="numeric"
-        onChangeText={(text) => setChequeAmount(text)}
-      />
-
-      {/* Confirm Button */}
-      <Button title="Confirm Payment" onPress={handleConfirmPayment} />
+    <View className='fles justify-center items-center h-full w-full'>
+      <Text className='text-center font-bold text-black'>
+        {rental_id}
+      </Text>
     </View>
+    // <View style={styles.container}>
+    //   <Text style={styles.header}>Bill Details</Text>
+
+    //   {/* Rental Details */}
+    //   <Text style={styles.label}>Rental Date: {new Date(rentalData.rental_date).toLocaleDateString()}</Text>
+    //   <Text style={styles.label}>Due Amount: ₹{dueAmount}</Text>
+    //   <Text style={styles.label}>Bike: {rentalData.bike}</Text>
+      
+    //   {/* Deposit Details */}
+    //   <Text style={styles.header}>Deposit Details</Text>
+    //   {rentalData.deposits.map((deposit, index) => (
+    //     <Text key={index} style={styles.label}>
+    //       {deposit.date}: ₹{deposit.deposit_amount} ({deposit.reason})
+    //     </Text>
+    //   ))}
+
+    //   {/* Payment Input */}
+    //   <Text style={styles.header}>Payment Breakdown</Text>
+    //   <TextInput
+    //     style={styles.input}
+    //     placeholder="UPI Amount"
+    //     keyboardType="numeric"
+    //     onChangeText={(text) => setUpiAmount(text)}
+    //   />
+    //   <TextInput
+    //     style={styles.input}
+    //     placeholder="Cash Amount"
+    //     keyboardType="numeric"
+    //     onChangeText={(text) => setCashAmount(text)}
+    //   />
+    //   <TextInput
+    //     style={styles.input}
+    //     placeholder="Cheque Amount"
+    //     keyboardType="numeric"
+    //     onChangeText={(text) => setChequeAmount(text)}
+    //   />
+
+    //   {/* Confirm Button */}
+    //   <Button title="Confirm Payment" onPress={handleConfirmPayment} />
+    // </View>
   );
 };
 

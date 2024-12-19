@@ -139,10 +139,9 @@ const DepositeDetail = () => {
         setIsLoading(false);
         if (responseJson.message) {
           showToast('Bike successfully deposited!');
-          
-          navigation.navigate('DrawerNavigator', {
-            b_id: Bikeid,
-            bikeCondition: bikeCondition,
+
+          navigation.navigate('UserBill', {
+            rental_id: responseJson.rental_id,
           });
         } else {
           Alert.alert(
@@ -285,7 +284,6 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    
     alignItems: 'center',
     justifyContent: 'center',
     // backgroundColor: '#feb101',
