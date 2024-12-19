@@ -177,160 +177,195 @@ const MiddlePayment = () => {
   return (
     <View style={styles.container}>
       <ScrollView
+        showsVerticalScrollIndicator={false} // Hides vertical scrollbar
+        showsHorizontalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         style={styles.Scroll}>
-        {/* Phone Input */}
-
-        <Dropdown
-          style={styles.dropdown}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          data={BikeData}
-          itemTextStyle={{color: '#000'}}
-          maxHeight={300}
-          labelField="label"
-          placeholder="Select Bike ID"
-          placeholderTextColor="#000"
-          onChange={item => {
-            setBikeid(item.value);
-            setPhone(item.phone);
-            setDueAmount(item.last_due_amount);
-          }}
-        />
-        <Text className="mt-5" style={styles.label}>
-          Phone:
-        </Text>
-        <TextInput
-          style={styles.input}
-          placeholderTextColor={"#000"}
-          placeholder="Enter Phone Number"
-          keyboardType="phone-pad"
-          value={phone ? phone + '   ---   Rs ' + DueAmount+" Due Amount" : ''}
-          onChangeText={setPhone}
-        />
-
         {/* Date Input */}
-        <Text style={styles.label}>Select Date</Text>
-        <View style={styles.DatePickerContainer}>
-          <DatePicker
-            mode="date"
-            date={selectedDate}
-            onDateChange={setSelectedDate}
-            androidVariant="nativeAndroid"
-            textColor="#000"
+
+        <View
+          style={{
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#FFF',
+            padding: 20,
+            marginTop: 20,
+            borderWidth: 1,
+            borderColor: '#f1f5f9',
+            borderRadius: 30,
+          }}>
+          <Text style={styles.label}>Select Date</Text>
+          <View style={styles.DatePickerContainer}>
+            <DatePicker
+              mode="date"
+              date={selectedDate}
+              onDateChange={setSelectedDate}
+              androidVariant="nativeAndroid"
+              textColor="#000"
+            />
+          </View>
+        </View>
+
+        {/* Phone Input */}
+        <View
+          style={{
+            backgroundColor: '#FFF',
+            padding: 30,
+            borderWidth: 1,
+            borderColor: '#f1f5f9',
+            borderRadius: 30,
+          }}>
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            data={BikeData}
+            itemTextStyle={{color: '#000'}}
+            maxHeight={300}
+            labelField="label"
+            placeholder="Select Bike ID"
+            placeholderTextColor="#000"
+            onChange={item => {
+              setBikeid(item.value);
+              setPhone(item.phone);
+              setDueAmount(item.last_due_amount);
+            }}
+          />
+          <Text className="mt-5" style={styles.label}>
+            Phone:
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor={'#000'}
+            placeholder="Enter Phone Number"
+            keyboardType="phone-pad"
+            value={
+              phone ? phone + '   ---   Rs ' + DueAmount + ' Due Amount' : ''
+            }
+            onChangeText={setPhone}
           />
         </View>
 
         {/* Total Amount Input */}
+        <View
+          style={{
+            backgroundColor: '#FFF',
+            padding: 20,
+            marginTop: 20,
+            borderWidth: 1,
+            borderColor: '#f1f5f9',
+            borderRadius: 30,
+          }}>
+          {/* Payment Methods */}
+          <Text style={styles.label}>Payment Methods:</Text>
+          <View>
+            {/* UPI */}
 
-        {/* Payment Methods */}
-        <Text style={styles.label}>Payment Methods:</Text>
-        <View style={styles.row}>
-          {/* UPI */}
+            <Checkbox
+              text="UPI"
+              value={upiChecked}
+              onPress={() => handleCheckboxPress('UPI')}
+            />
 
-          <Checkbox
-            text="UPI"
-            value={upiChecked}
-            onPress={() => handleCheckboxPress('UPI')}
-          />
+            <Checkbox
+              text="Cash"
+              value={cashChecked}
+              onPress={() => handleCheckboxPress('Cash')}
+            />
 
-          <Checkbox
-            text="Cash"
-            value={cashChecked}
-            onPress={() => handleCheckboxPress('Cash')}
-          />
+            <Checkbox
+              text="Cheque"
+              value={chequeChecked}
+              onPress={() => handleCheckboxPress('Cheque')}
+            />
 
-          <Checkbox
-            text="Cheque"
-            value={chequeChecked}
-            onPress={() => handleCheckboxPress('Cheque')}
-          />
+            <Checkbox
+              text="UPI + Cash"
+              value={mixChecked}
+              onPress={() => handleCheckboxPress('mix')}
+            />
+          </View>
+          <View>
+            {upiChecked && (
+              <View className="mt-10 mb-[-30]" style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter UPI Amount"
+                  keyboardType="numeric"
+                  value={upi}
+                  onChangeText={text => {
+                    setupi(text);
+                  }}
+                />
+              </View>
+            )}
+            {cashChecked && (
+              <View className="mt-10 mb-[-30]" style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter Cash Amount"
+                  keyboardType="numeric"
+                  value={cash}
+                  onChangeText={text => {
+                    setcash(text);
+                  }}
+                />
+              </View>
+            )}
+            {chequeChecked && (
+              <View className="mt-10 mb-[-30]" style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter Cheque Amount"
+                  keyboardType="numeric"
+                  value={cheque}
+                  onChangeText={text => {
+                    setcheque(text);
+                  }}
+                />
+              </View>
+            )}
+            {mixChecked && (
+              <View className="mt-10 mb-[-30]" style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter UPI Amount"
+                  keyboardType="numeric"
+                  value={upi}
+                  onChangeText={text => {
+                    setupi(text);
+                  }}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter Cash Amount"
+                  keyboardType="numeric"
+                  value={cash}
+                  onChangeText={text => {
+                    setcash(text);
+                  }}
+                />
+              </View>
+            )}
+          </View>
 
-          <Checkbox
-            text="UPI + Cash"
-            value={mixChecked}
-            onPress={() => handleCheckboxPress('mix')}
+          <Text className="mt-10" style={styles.label}>
+            Total Amount:
+          </Text>
+          <TextInput
+            className="mt-1"
+            style={styles.input}
+            placeholder="Enter Total Amount"
+            keyboardType="numeric"
+            value={amount.toString()}
+            onChangeText={text => {
+              setAmount(text);
+            }}
           />
         </View>
-        <View>
-          {upiChecked && (
-            <View className="mt-10 mb-[-30]" style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter UPI Amount"
-                keyboardType="numeric"
-                value={upi}
-                onChangeText={text => {
-                  setupi(text);
-                }}
-              />
-            </View>
-          )}
-          {cashChecked && (
-            <View className="mt-10 mb-[-30]" style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter Cash Amount"
-                keyboardType="numeric"
-                value={cash}
-                onChangeText={text => {
-                  setcash(text);
-                }}
-              />
-            </View>
-          )}
-          {chequeChecked && (
-            <View className="mt-10 mb-[-30]" style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter Cheque Amount"
-                keyboardType="numeric"
-                value={cheque}
-                onChangeText={text => {
-                  setcheque(text);
-                }}
-              />
-            </View>
-          )}
-          {mixChecked && (
-            <View className="mt-10 mb-[-30]" style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter UPI Amount"
-                keyboardType="numeric"
-                value={upi}
-                onChangeText={text => {
-                  setupi(text);
-                }}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Enter Cash Amount"
-                keyboardType="numeric"
-                value={cash}
-                onChangeText={text => {
-                  setcash(text);
-                }}
-              />
-            </View>
-          )}
-        </View>
-
-        <Text className="mt-10" style={styles.label}>
-          Total Amount:
-        </Text>
-        <TextInput
-          className="mt-1"
-          style={styles.input}
-          placeholder="Enter Total Amount"
-          keyboardType="numeric"
-          value={amount.toString()}
-          onChangeText={text => {
-            setAmount(text);
-          }}
-        />
         {/* Submit Button */}
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Submit</Text>
@@ -345,8 +380,8 @@ export default MiddlePayment;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+    padding: 40,
+    backgroundColor: '#FFF',
     justifyContent: 'center',
   },
   dropdown: {
@@ -385,11 +420,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 15,
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
+
   checkboxContainer: {
     flexDirection: 'row',
     marginTop: 10,
@@ -408,19 +439,16 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   button: {
-    backgroundColor: '#f1b700',
+    backgroundColor: '#000',
     paddingVertical: 10,
     alignItems: 'center',
     borderRadius: 5,
     marginTop: 20,
   },
   buttonText: {
-    color: '#fff',
+    color: '#feb101',
     fontSize: 18,
     fontWeight: 'bold',
   },
-  DatePickerContainer: {
-    marginLeft: '8%',
-    borderRadius: 50,
-  },
+
 });

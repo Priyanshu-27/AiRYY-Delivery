@@ -13,6 +13,7 @@ import {
   Image,
 } from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Dropdown} from 'react-native-element-dropdown';
@@ -160,17 +161,16 @@ const DepositeDetail = () => {
   return (
     <LinearGradient colors={['#FFF', '#facc15']} style={styles.container}>
       <View style={styles.Vcontainer}>
-        <LottieView
-          style={styles.video}
-          source={require('../assets/DepositeBikeAnime.json')}
-          autoPlay
-          loop
+        <Image
+          source={require('../assets/deposite.png')}
+          style={{width: 250, height: 250, top: 115, position: 'absolute'}}
+          resizeMode="cover"
         />
       </View>
       <View
         style={{
           position: 'absolute',
-          top: 280,
+          top: 350,
           backgroundColor: '#FFF',
           paddingHorizontal: 30,
           paddingVertical: 10,
@@ -277,10 +277,12 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   Vcontainer: {
+
     justifyContent: 'center',
     alignItems: 'center',
     height: '20%',
     width: 200,
+     
   },
 
   container: {

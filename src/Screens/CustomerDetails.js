@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import {useNavigation} from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Picker} from '@react-native-picker/picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
@@ -280,9 +281,9 @@ const CustomerDetails = () => {
   }, [IGotTheuser, phoneNumber]);
 
   return (
-    <View style={styles.background}>
+    <View style={{flex: 1, backgroundColor: '#fefce8'}}>
       {UserNotFound ? (
-        <View className="flex-1 h-full w-full justify-center bg-[#fefce8] p-2 ">
+        <View className="">
           <ScrollView contentContainerStyle={styles.contentContainer2}>
             <View style={styles.animationContainer}>
               <Image
@@ -311,9 +312,9 @@ const CustomerDetails = () => {
               start={{x: 0, y: 0}} // Start from the top
               end={{x: 0, y: 1}} // End at the bottom
               style={{
-                backgroundColor: '#FFF',
                 width: '100%',
-                padding: 30,
+                padding: 40,
+                letterSpacing: 1,
                 borderRadius: 30,
                 // Top-right corner
               }}>
@@ -324,7 +325,7 @@ const CustomerDetails = () => {
                   alignItems: 'center',
                   marginBottom: 30,
                 }}>
-                <Text style={{color: 'green', fontWeight: '700'}}>
+                <Text style={{color: '#000', fontWeight: 'bold'}}>
                   Count - {UserCount || 0}
                 </Text>
               </View>
@@ -377,6 +378,60 @@ const CustomerDetails = () => {
               loop
             />
           </View> */}
+          {openModel ? (
+            <View style={styles.overlay}>
+              <View style={styles.modalContainer}>
+                <View className="flex-row justify-between w-full">
+                  <Text style={styles.modalTitle}>Enter Your Details</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setopenModel(prevState => !prevState);
+                    }}>
+                    <Ionicons
+                      name="close"
+                      size={28}
+                      color="#000"
+                      // backgroundColor='#000'
+                    />
+                  </TouchableOpacity>
+                </View>
+
+                <View style={{marginTop: 30}}></View>
+
+                <TextInput
+                  placeholder="Voter Id Number"
+                  style={styles.input3}
+                  value={voterId}
+                  onChangeText={text => setVoterId(text)}
+                  placeholderTextColor="#000"
+                />
+
+                <TextInput
+                  placeholder="Licence Number"
+                  style={styles.input3}
+                  value={licenseNumber}
+                  onChangeText={text => setLicenseNumber(text)}
+                  placeholderTextColor="#000"
+                />
+
+                <TextInput
+                  placeholder="Pan Number"
+                  style={styles.input3}
+                  placeholderTextColor="#000"
+                  value={PanNumber}
+                  onChangeText={text => setPanNumber(text)}
+                />
+
+                <TouchableOpacity
+                  style={styles.button2}
+                  onPress={() => {
+                    console.log('hello');
+                  }}>
+                  <Text style={styles.buttonText2}>Submit</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : null}
           <LinearGradient
             colors={['#feb101', '#fefce8']}
             start={{x: 0, y: 0}} // Start from the top
@@ -384,8 +439,9 @@ const CustomerDetails = () => {
             style={{
               backgroundColor: '#FFF',
               width: '100%',
+              height: '100%',
               padding: 30,
-              borderRadius: 50,
+              // borderRadius: 50,
               paddingTop: 50,
               marginTop: 40,
               // Top-right corner
@@ -397,7 +453,8 @@ const CustomerDetails = () => {
                 alignItems: 'center',
                 marginBottom: 30,
               }}>
-              <Text style={{color: 'green', fontWeight: '700'}}>
+              <Text
+                style={{color: '#000', fontWeight: 'bold', letterSpacing: 1}}>
                 Count - {UserCount || 0}
               </Text>
               <TouchableOpacity
@@ -684,42 +741,6 @@ const CustomerDetails = () => {
               </TouchableOpacity>
             )}
           </LinearGradient>
-          {openModel ? (
-            <View style={styles.overlay}>
-              <View style={styles.modalContainer}>
-                <Text style={styles.modalTitle}>Please Enter Your Details</Text>
-
-                <TextInput
-                  placeholder="Voter Id Number"
-                  style={styles.input3}
-                  value={voterId}
-                  onChangeText={text => setVoterId(text)}
-                />
-
-                <TextInput
-                  placeholder="Licence Number"
-                  style={styles.input3}
-                  value={licenseNumber}
-                  onChangeText={text => setLicenseNumber(text)}
-                />
-
-                <TextInput
-                  placeholder="Pan Number"
-                  style={styles.input3}
-                  value={PanNumber}
-                  onChangeText={text => setPanNumber(text)}
-                />
-
-                <TouchableOpacity
-                  style={styles.button2}
-                  onPress={() => {
-                    setopenModel(prevState => !prevState);
-                  }}>
-                  <Text style={styles.buttonText2}>Done</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ) : null}
         </ScrollView>
       )}
     </View>
@@ -736,12 +757,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     color: '#000',
   },
-  background: {
-    flex: 1,
-    backgroundColor: '#fefce8',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
+
   contentContainer: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -824,6 +840,8 @@ const styles = StyleSheet.create({
   },
 
   overlay: {
+    flex: 1,
+    width: '100%',
     position: 'absolute',
     top: 0,
     left: 0,
@@ -836,8 +854,8 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     backgroundColor: 'white',
-    width: '90%',
-    padding: 20,
+    width: '80%',
+    padding: 30,
     borderRadius: 10,
     alignItems: 'center',
     shadowColor: '#000',
@@ -847,6 +865,7 @@ const styles = StyleSheet.create({
     elevation: 5, // For Android shadow
   },
   modalTitle: {
+    color: '#000',
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
@@ -862,14 +881,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   button2: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#000',
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 90,
     borderRadius: 5,
     marginTop: 10,
   },
   buttonText2: {
-    color: 'white',
+    color: '#feb101',
     fontSize: 16,
     fontWeight: 'bold',
   },
