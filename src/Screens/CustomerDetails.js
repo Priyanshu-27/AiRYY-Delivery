@@ -74,7 +74,16 @@ const CustomerDetails = () => {
       setEmailError('');
     }
 
-    if (!firstName || !lastName || !phoneNumber) {
+    if (
+      !firstName ||
+      !lastName ||
+      !phoneNumber ||
+      !selectedCity ||
+      !selectedState ||
+      !email ||
+      !gender ||
+      !aadharNumber
+    ) {
       Alert.alert('Error', 'Please fill in all required fields.');
       return;
     }
@@ -87,15 +96,16 @@ const CustomerDetails = () => {
       lname: lastName,
       user_City: selectedCity,
       user_State: selectedState,
-      user_email: email || '',
-      user_Gender: gender || '',
-      secondary_phone: secondaryPhone || '',
-      aadhar_number: aadharNumber || '',
-      license_number: licenseNumber || '',
-      voter_id: voterId || '',
-      pan_number: PanNumber || '',
+      user_email: email || null,
+      user_Gender: gender=='male'?"Male":gender=='female'?"Female":"Other",
+      secondary_phone: secondaryPhone || null,
+      aadhar_number: aadharNumber || null,
+      license_number: licenseNumber || null,
+      voter_id: voterId || null,
+      pan_number: PanNumber || null,
     };
 
+  console.log(userData)
     setIsLoading(true);
 
     try {
@@ -106,7 +116,7 @@ const CustomerDetails = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(userData),
+          body: JSON.stringify(userData), 
         },
       );
 
@@ -156,7 +166,7 @@ const CustomerDetails = () => {
       if (response.ok && responseData.user_phone) {
         console.log(responseData);
         setIGotTheuser(true);
-        setUpdate(true)
+        setUpdate(true);
         setEmail(responseData.user_email);
         setAadharNumber(responseData.aadhar_number);
         setPanNumber(responseData.pan_number);
@@ -238,8 +248,20 @@ const CustomerDetails = () => {
       const lname = nameParts[1] || '';
 
       // Set the state with first name and last name
-      setFirstName(fname);
-      setLastName(lname);
+      setFirstName(User.name.split(' ')[0]);
+      setLastName(User.name.split(' ')[1]);
+      setEmail(User.email);
+      setSelectedCity(User.City);
+      setGender(
+        User.Gender == 'male'
+          ? 'Male'
+          : User.Gender == 'female'
+          ? 'Female'
+          : User.Gender == 'other'
+          ? 'Other'
+          : '',
+      );
+      setSelectedState(User.State);
     }
 
     // setIsLoadingOtp(true);
@@ -691,7 +713,6 @@ const CustomerDetails = () => {
                 <TouchableOpacity
                   style={styles.button2}
                   onPress={() => {
-                    
                     setopenModel(prevState => !prevState);
                   }}>
                   <Text style={styles.buttonText2}>Done</Text>

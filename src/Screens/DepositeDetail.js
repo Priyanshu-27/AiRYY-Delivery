@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   ToastAndroid,
-  Image
+  Image,
 } from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
@@ -46,20 +46,17 @@ const DepositeDetail = () => {
 
   const focusHandler = () => {
     console.log('Fetching bike data...');
-    fetch(
-      `https://${DOMAIN}/Delivery/delivery-rental-list/`,
-      {
-        method: 'GET',
-      },
-    )
+    fetch(`https://${DOMAIN}/Delivery/delivery-rental-list/`, {
+      method: 'GET',
+    })
       .then(response => response.json())
       .then(responseJson => {
         const formattedData = responseJson.map(item => ({
           label: item.bike.license_plate + ' - ' + item.bike.type,
           value: item.bike.license_plate,
-          phone:  item.user.user.phone
+          phone: item.user.user.phone,
         }));
-        
+
         setBikeData(formattedData);
         if (formattedData.length > 0) {
           setValue(formattedData[0].value);
@@ -79,7 +76,7 @@ const DepositeDetail = () => {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     focusHandler();
-    setPhoneNumber("")
+    setPhoneNumber('');
     setRefreshing(false);
   }, []);
 
@@ -130,22 +127,20 @@ const DepositeDetail = () => {
 
     console.log(bodyData);
 
-    fetch(
-      `https://${DOMAIN}/Delivery/delivery-rental/deposite/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bodyData),
+    fetch(`https://${DOMAIN}/Delivery/delivery-rental/deposite/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    )
+      body: JSON.stringify(bodyData),
+    })
       .then(response => response.json())
       .then(responseJson => {
         setIsLoading(false);
         if (responseJson.message) {
           showToast('Bike successfully deposited!');
-          navigation.navigate('UserBill', {
+          
+          navigation.navigate('DrawerNavigator', {
             b_id: Bikeid,
             bikeCondition: bikeCondition,
           });
@@ -168,81 +163,90 @@ const DepositeDetail = () => {
       <View style={styles.Vcontainer}>
         <LottieView
           style={styles.video}
-          source={require('../assets/DepositeBikeAnime.json')} 
+          source={require('../assets/DepositeBikeAnime.json')}
           autoPlay
           loop
         />
       </View>
       <View
         style={{
-          
-          position:'absolute' ,
-          top:350 ,
+          position: 'absolute',
+          top: 280,
           backgroundColor: '#FFF',
           paddingHorizontal: 30,
           paddingVertical: 10,
           borderRadius: 20,
         }}>
-        <Text style={{color: '#000', fontWeight: '700' , letterSpacing:1}}>
+        <Text style={{color: '#000', fontWeight: '700', letterSpacing: 1}}>
           Delivery Boy Bike Deposite.
         </Text>
       </View>
-     
-      <View style={styles.content}>
-        <View style={{marginBottom: 10, marginTop: 10}}>
-          {BikeidError ? (
-            <Text style={styles.errorText}>{BikeidError}</Text>
-          ) : null}
-          <Dropdown
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            data={BikeData}
-            itemTextStyle={{color: '#000'}}
-            maxHeight={300}
-            labelField="label"
-            placeholder="Select Bike ID"
-            placeholderTextColor="#000"
-            onChange={item => {
-              setBikeid(item.value);
-            }}
-          />
-        </View>
-        <View style={{marginBottom: 20}}>
-          <TextInput
-            style={[styles.input, phoneError && {borderColor: 'red'}]}
-            placeholder="Enter Phone Number"
-            placeholderTextColor="#000"
-            keyboardType="number-pad"
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-          />
-          {phoneError ? (
-            <Text style={styles.errorText}>{phoneError}</Text>
-          ) : null}
-        </View>
-        <View style={styles.checkboxContainer}>
-          <Text style={styles.label}>Bike Condition:</Text>
-          <Checkbox
-            label="Good"
-            value={bikeCondition === 'good'}
-            onPress={() => handleBikeConditionChange('good')}
-          />
-          <Checkbox
-            label="Not Good"
-            value={bikeCondition === 'notgood'}
-            onPress={() => handleBikeConditionChange('notgood')}
-          />
-        </View>
-        <TouchableOpacity style={styles.depositButton} onPress={handleDeposit}>
-          <Text style={styles.depositButtonText}>Submit</Text>
-        </TouchableOpacity>
-        {isLoading && (
-          <View style={styles.loader}>
-            <ActivityIndicator size="large" color="#000000" />
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        style={{width: '100%', height: '200%'}}>
+        <View style={styles.content}>
+          <View style={{marginTop: 10}}>
+            {BikeidError ? (
+              <Text style={styles.errorText}>{BikeidError}</Text>
+            ) : null}
+            <Dropdown
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              data={BikeData}
+              itemTextStyle={{color: '#000'}}
+              maxHeight={300}
+              labelField="label"
+              placeholder="Select Bike ID"
+              placeholderTextColor="#000"
+              onChange={item => {
+                setBikeid(item.value);
+                setPhoneNumber(item.phone);
+              }}
+            />
           </View>
-        )}
-      </View>
+
+          <View style={{marginBottom: 20}}>
+            <TextInput
+              style={[styles.input, phoneError && {borderColor: 'red'}]}
+              placeholder="Enter Phone Number"
+              placeholderTextColor="#000"
+              keyboardType="number-pad"
+              editable={false}
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+            />
+            {phoneError ? (
+              <Text style={styles.errorText}>{phoneError}</Text>
+            ) : null}
+          </View>
+          <View style={styles.checkboxContainer}>
+            <Text style={styles.label}>Bike Condition:</Text>
+            <Checkbox
+              label="Good"
+              value={bikeCondition === 'good'}
+              onPress={() => handleBikeConditionChange('good')}
+            />
+            <Checkbox
+              label="Not Good"
+              value={bikeCondition === 'notgood'}
+              onPress={() => handleBikeConditionChange('notgood')}
+            />
+          </View>
+          <TouchableOpacity
+            style={styles.depositButton}
+            onPress={handleDeposit}>
+            <Text style={styles.depositButtonText}>Submit</Text>
+          </TouchableOpacity>
+          {isLoading && (
+            <View style={styles.loader}>
+              <ActivityIndicator size="large" color="#000000" />
+            </View>
+          )}
+        </View>
+      </ScrollView>
       {/* </ScrollView> */}
     </LinearGradient>
   );
@@ -250,7 +254,7 @@ const DepositeDetail = () => {
 
 const styles = StyleSheet.create({
   loader: {
-    justifyContent: 'center',
+    justifyContent: '',
     alignItems: 'end',
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
   },
@@ -274,7 +278,6 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   Vcontainer: {
-   
     justifyContent: 'center',
     alignItems: 'center',
     height: '20%',
@@ -282,7 +285,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    flex: 1,
+    
     alignItems: 'center',
     justifyContent: 'center',
     // backgroundColor: '#feb101',
@@ -290,18 +293,18 @@ const styles = StyleSheet.create({
   Scroll: {
     marginTop: 30,
     width: '100%',
-    height:'100%',
+    height: '100%',
     flex: 1,
   },
   content: {
     backgroundColor: '#fff',
     // paddingVertical: 80,
-    paddingBottom:80 ,
+    paddingBottom: 80,
     paddingHorizontal: 20,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     width: '100%',
-    height:400 , 
+    height: 400,
     shadowColor: 'black',
     shadowOpacity: 0.5,
     shadowOffset: {width: 0, height: 2},

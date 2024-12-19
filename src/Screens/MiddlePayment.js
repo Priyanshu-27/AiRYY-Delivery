@@ -11,7 +11,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {DOMAIN} from '@env';
-import {useFocusEffect} from '@react-navigation/native';
+
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {Dropdown} from 'react-native-element-dropdown';
 import DatePicker from 'react-native-date-picker';
 
@@ -40,6 +41,7 @@ const MiddlePayment = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [BikeData, setBikeData] = useState([]);
   const [amount, setAmount] = useState(0);
+  const navigation = useNavigation()
   const [DueAmount, setDueAmount] = useState(0);
   const [UPIMethod, setUPIMethod] = useState('QR Code');
   const [upi, setupi] = useState(false);
@@ -118,6 +120,12 @@ const MiddlePayment = () => {
         Alert.alert(
           'Success',
           `Payment added successfully! And Due is ${data.due_amount}`,
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.navigate('DrawerNavigator'),
+            },
+          ],
         );
         onRefresh();
       })
@@ -196,6 +204,7 @@ const MiddlePayment = () => {
         </Text>
         <TextInput
           style={styles.input}
+          placeholderTextColor={"#000"}
           placeholder="Enter Phone Number"
           keyboardType="phone-pad"
           value={phone ? phone + '   ---   Rs ' + DueAmount+" Due Amount" : ''}

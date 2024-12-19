@@ -158,79 +158,124 @@ const VehicleDetails = () => {
       battery_id: selectedBattery,
       mode_of_rental: TimeTakenUnit,
       battery_free: battery_free,
-
-
-     
-      mode_of_payment: ['upi', 'cash', 'mix'].includes(AdvancePayUPI > 0 && AdvancePayCash > 0 ? 'mix' : AdvancePayCash > 0 ? 'cash' : 'upi') ? (AdvancePayUPI > 0 && AdvancePayCash > 0 ? 'mix' : AdvancePayCash > 0 ? 'cash' : 'upi') : 'upi',
-      advance_amount: AdvancePay,
-      advance_upi_amount: AdvancePayCash,
-      advance_cash_amount: AdvancePayUPI,
-
-
-
-      date: new Date().toISOString().split('T')[0],
-      reason : "Have to return",
-      mode_of_deposit: ['upi', 'cash', 'mix'].includes(ReturnAmountUPI > 0 && ReturnAmountCash > 0 ? 'mix' : ReturnAmountCash > 0 ? 'cash' : 'upi') ? (ReturnAmountUPI > 0 && ReturnAmountCash > 0 ? 'mix' : ReturnAmountCash > 0 ? 'cash' : 'upi') : 'upi',
-      deposit_amount: ReturnAmount,
-      upi_amount: ReturnAmountUPI,
-      cash_amount: ReturnAmountCash,
     };
 
-    // setIsLoading(true);
+    if (AdvancePay == 'AdvancePay') {
+      data.advance_amount = Number(AdvancePayUPI) + Number(AdvancePayCash);
+      data.advance_upi_amount = AdvancePayUPI;
+      data.advance_cash_amount = AdvancePayCash;
+      data.mode_of_payment = ['upi', 'cash', 'mix'].includes(
+        AdvancePayUPI > 0 && AdvancePayCash > 0
+          ? 'mix'
+          : AdvancePayCash > 0
+          ? 'cash'
+          : 'upi',
+      )
+        ? AdvancePayUPI > 0 && AdvancePayCash > 0
+          ? 'mix'
+          : AdvancePayCash > 0
+          ? 'cash'
+          : 'upi'
+        : 'upi';
+    }else{
+      data.booking_status = 'Start'
+      data.total_amount = 0
+      data.advance_upi_amount = 0;
+      data.advance_cash_amount = 0;
+      data.mode_of_payment = ['upi', 'cash', 'mix'].includes(
+        AdvancePayUPI > 0 && AdvancePayCash > 0
+          ? 'mix'
+          : AdvancePayCash > 0
+          ? 'cash'
+          : 'upi',
+      )
+        ? AdvancePayUPI > 0 && AdvancePayCash > 0
+          ? 'mix'
+          : AdvancePayCash > 0
+          ? 'cash'
+          : 'upi'
+        : 'upi';
+    }
 
-    // fetch(`https://${DOMAIN}/Delivery/delivery-rental/create/`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(data),
-    // })
-    //   .then(response => {
-    //     if (!response.ok) {
-    //       throw new Error(`HTTP error! status: ${response.status}`);
-    //     }
-    //     return response.json();
-    //   })
-    //   .then(responseJson => {
-    //     if (responseJson.rental) {
-    //       Alert.alert('Done', `Give this Bike ${responseJson.rental}`, [
-    //         {
-    //           text: 'OK',
-    //           onPress: () => {
-    //             // Navigate to the 'DrawerNavigator' screen after the user presses "OK"
-    //             navigation.navigate('DrawerNavigator');
-    //           },
-    //         },
-    //       ]);
-    //     } else if (responseJson.Error) {
-    //       Alert.alert(`Error`, `Try again! Error: ${responseJson.Error}`, [
-    //         {
-    //           text: 'OK',
-    //         },
-    //       ]);
-    //     } else {
-    //       Alert.alert(
-    //         'Unexpected Response',
-    //         'The API response does not contain the expected data structure.',
-    //         [
-    //           {
-    //             text: 'OK',
-    //           },
-    //         ],
-    //       );
-    //     }
+    if (ReturnAmount == 'ReturnAmount') {
+      (data.date = new Date().toISOString().split('T')[0]),
+        (data.reason = 'Have to return'),
+        (data.mode_of_deposite = ['upi', 'cash', 'mix'].includes(
+          ReturnAmountUPI > 0 && ReturnAmountCash > 0
+            ? 'mix'
+            : ReturnAmountCash > 0
+            ? 'cash'
+            : 'upi',
+        )
+          ? ReturnAmountUPI > 0 && ReturnAmountCash > 0
+            ? 'mix'
+            : ReturnAmountCash > 0
+            ? 'cash'
+            : 'upi'
+          : 'upi'),
+        (data.deposit_amount =
+          Number(ReturnAmountUPI) + Number(ReturnAmountCash));
+      data.upi_amount = ReturnAmountUPI;
+      data.cash_amount = ReturnAmountCash;
+    }
+    console.log(data);
+    setIsLoading(true);
 
-    //     setIsLoading(false);
-    //   })
-    //   .catch(error => {
-    //     console.error('API Error:', error);
-    //     Alert.alert('Error', `Try again!`, [
-    //       {
-    //         text: 'OK',
-    //       },
-    //     ]);
-    //     setIsLoading(false);
-    //   });
+    fetch(`https://${DOMAIN}/Delivery/delivery-rental/create/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then(response => {
+        console.log(response);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(responseJson => {
+        
+        if (responseJson.rental) {
+          Alert.alert('Done', `Give this Bike ${responseJson.rental}`, [
+            {
+              text: 'OK',
+              onPress: () => {
+                // Navigate to the 'DrawerNavigator' screen after the user presses "OK"
+                navigation.navigate('DrawerNavigator');
+              },
+            },
+          ]);
+        } else if (responseJson.Error) {
+          Alert.alert(`Error`, `Try again! Error: ${responseJson.Error}`, [
+            {
+              text: 'OK',
+            },
+          ]);
+        } else {
+          Alert.alert(
+            'Unexpected Response',
+            'The API response does not contain the expected data structure.',
+            [
+              {
+                text: 'OK',
+              },
+            ],
+          );
+        }
+
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('API Error:', error);
+        Alert.alert('Error', `Try again!`, [
+          {
+            text: 'OK',
+          },
+        ]);
+        setIsLoading(false);
+      });
   };
 
   const validateFields = () => {
