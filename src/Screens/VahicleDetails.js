@@ -200,7 +200,7 @@ const VehicleDetails = () => {
     if (ReturnAmount == 'ReturnAmount') {
       (data.date = new Date().toISOString().split('T')[0]),
         (data.reason = 'Have to return'),
-        (data.mode_of_deposite = ['upi', 'cash', 'mix'].includes(
+        (data.mode_of_deposit = ['upi', 'cash', 'mix'].includes(
           ReturnAmountUPI > 0 && ReturnAmountCash > 0
             ? 'mix'
             : ReturnAmountCash > 0

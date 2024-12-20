@@ -21,13 +21,13 @@ const Navigation = () => {
       <Stack.Navigator screenOptions={{headerShown: false}}>
         {loggedIn ? (
           <>
+            <Stack.Screen name="UserBill" component={UserBill} />
             <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
             <Stack.Screen name="CustomerDetails" component={CustomerDetails} />
             <Stack.Screen name="DepositeDetail" component={DepositeDetail} />
             <Stack.Screen name="Emergency" component={Emergency} />
             <Stack.Screen name="BikeAvailibility" component={BikeAvailability} />
             <Stack.Screen name="VehicleDetails" component={VehicleDetails} />
-            <Stack.Screen name="UserBill" component={UserBill} />
             <Stack.Screen name="MiddlePayment" component={MiddlePayment} />
                       
           </>
