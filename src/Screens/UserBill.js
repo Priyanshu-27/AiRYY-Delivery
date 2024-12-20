@@ -30,7 +30,7 @@ const Checkbox = ({text, value, onPress}) => {
 };
 
 const UserBill = ({route, navigation}) => {
-  const rental_id = 1;
+  const {rental_id} = route.params;
   const [rentalData, setRentalData] = useState(null);
 
   const [UPIMethod, setUPIMethod] = useState('QR Code');
