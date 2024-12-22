@@ -29,8 +29,10 @@ const Checkbox = ({text, value, onPress}) => {
   );
 };
 
+
 const UserBill = ({route, navigation}) => {
   const {rental_id} = route.params;
+  
   const [rentalData, setRentalData] = useState(null);
 
   const [UPIMethod, setUPIMethod] = useState('QR Code');
@@ -42,7 +44,8 @@ const UserBill = ({route, navigation}) => {
   const [chequeChecked, setChequeChecked] = useState(false);
   const [mixChecked, setmixChecked] = useState(null);
   const [amount, setAmount] = useState(0);
-
+  const [rentalDate , setRentalDate] = useState(" ") ; 
+  const [depositeDate , setdepositeDate] = useState(" ") ; 
   const [numberofpaymentsAmount, setnumberofpaymentsAmount] = useState(0);
   const [paymentDetails, setpaymentDetails] = useState([]);
   const [lastPaymentDetails, setlastPaymentDetails] = useState({});
@@ -97,12 +100,17 @@ const UserBill = ({route, navigation}) => {
       const response = await fetch(
         `http://${DOMAIN}/Delivery/lastPayment/?rental_id=${rental_id}`,
       );
+
+    
       const data = await response.json();
+     
+      setRentalDate(data.rental_date);
+      setdepositeDate(data.return_date);
       setRentalData(data);
       setdepositeDetails(data.deposits);
       setpaymentDetails(data.payments);
       setlastPaymentDetails(data.payments[data.payments.length - 1] || {});
-      setuserDetails(data.user);
+      setuserDetails(data.user.user);
       setbikeDetails(data.bike);
       setnumberofpaymentsAmount(data.payments.length);
       setDueAmount(data.payments[data.payments.length - 1]?.due_amount || 0);
@@ -200,72 +208,208 @@ const UserBill = ({route, navigation}) => {
         <Text style={styles.header}>Bill Details</Text>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Rental Details</Text>
-        <Text style={styles.label}>
-          Rental Date:{' '}
-          <Text style={styles.value}>
-            {formatDate(rentalData?.rental_date)}
+      {/* User Details Section */}
+      <View
+        style={{
+          backgroundColor: '#FFF',
+          paddingLeft: 20,
+          padding: 10,
+          borderRadius: 20,
+          marginBottom: 10,
+        }}>
+        <Text
+          style={{
+            position: 'absolute',
+            bottom: 7,
+            top: 18,
+            right: 6,
+            left: 28,
+            color: '#000',
+            fontWeight: 'bold',
+            textDecorationLine: 'underline',
+          }}>
+          User Detail.
+        </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            marginTop: 50,
+            alignItems: 'center',
+            marginBottom: 20,
+          }}>
+          <View
+            style={{
+              position: 'absolute',
+              paddingVertical: 10,
+              paddingHorizontal: 0,
+              borderRadius: 50,
+              backgroundColor: '#fefce8',
+              height: 40,
+              width: 40,
+              borderWidth: 1,
+              borderColor: '#454545',
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontWeight: 'bold',
+                color: '#000',
+              }}>
+              {userDetails?.name?.charAt(0) || 'U'}
+            </Text>
+          </View>
+
+          <View style={{flexDirection: 'column', marginLeft: 50}}>
+            <Text style={{fontWeight: 'bold', color: '#000'}}>
+              {userDetails?.name || 'Loading...'}
+            </Text>
+            <Text style={{color: '#454545', fontSize: 12}}>
+              {userDetails?.phone || 'N/A'}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Bike Detail  */}
+
+      <View
+        style={{
+          backgroundColor: '#FFF',
+
+          // padding: 50,
+          paddingVertical: 40,
+          paddingHorizontal: 20,
+          borderRadius: 20,
+          marginBottom: 10,
+        }}>
+        <View>
+          <View
+            style={{
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}>
+            <Text
+              style={{
+                color: '#000',
+                textDecorationLine: 'underline',
+                fontWeight: 'bold',
+              }}>
+              Bike Detail .
+            </Text>
+            <View
+              style={{
+                marginTop: 30,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <Text style={{color: '#454545', fontSize: 12, fontWeight: '500'}}>
+                Type: {bikeDetails.type}
+              </Text>
+              <Text style={{color: '#454545', fontSize: 12, fontWeight: '500'}}>
+                Licence Plate: {bikeDetails.license_plate}
+              </Text>
+            </View>
+          </View>
+
+          <View>
+            <View
+              style={{
+                position: 'absolute',
+                bottom: 40,
+                right: 0,
+                backgroundColor: '#fefce8',
+                paddingHorizontal: 15,
+                paddingVertical: 10,
+                borderRadius: 30,
+              }}>
+              <Text style={{color: '#454545', fontSize: 12, fontWeight: '500'}}>
+                Free Batteries : 40
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: 30,
+          }}>
+          <Text style={{color: '#454545', fontSize: 13, fontWeight: '500'}}>
+            Rental: {formatDate(rentalDate)}
           </Text>
-        </Text>
-        <Text style={styles.label}>
-          Due Amount: <Text style={styles.value}>₹{dueAmount}</Text>
-        </Text>
-        <Text style={styles.label}>
-          Bike: <Text style={styles.value}>{bikeDetails?.license_plate}</Text>
-        </Text>
+          <Text style={{color: '#454545', fontSize: 13, fontWeight: '500'}}>
+            Return: {formatDate(depositeDate)}
+          </Text>
+        </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Last Payment Details</Text>
-        {lastPaymentDetails ? (
-          <View>
-            <Text style={styles.label}>
-              Date:{' '}
-              <Text style={styles.value}>
-                {formatDate(lastPaymentDetails?.date)}
-              </Text>
+        <Text style={styles.sectionHeader}>Deposite Amount Details</Text>
+        {depositeDetails?.map((deposit, index) => (
+          <View key={index} style={{}}>
+            <Text
+              style={{
+                position: 'absolute',
+                bottom: 35,
+                left: 200,
+                color: '#454545',
+                fontSize: 12,
+              }}>
+              {formatDate(deposit.date)}
             </Text>
-            <Text style={styles.label}>
-              UPI:{' '}
-              <Text style={styles.value}>
-                ₹{lastPaymentDetails?.upi_amount}
+            <View>
+              <Text style={{color: 'green', fontWeight: '600'}}>
+                ₹{deposit.deposit_amount}
               </Text>
-            </Text>
-            <Text style={styles.label}>
-              Cash:{' '}
-              <Text style={styles.value}>
-                ₹{lastPaymentDetails?.cash_amount}
-              </Text>
-            </Text>
-            <Text style={styles.label}>
-              Cheque:{' '}
-              <Text style={styles.value}>
-                ₹{lastPaymentDetails?.cheque_amount}
-              </Text>
-            </Text>
-            <Text style={styles.label}>
-              Due Amount:{' '}
-              <Text style={styles.value}>
-                ₹{lastPaymentDetails?.due_amount}
-              </Text>
-            </Text>
+            </View>
           </View>
-        ) : (
-          <Text style={styles.label}>No previous payments recorded.</Text>
+        ))}
+      </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionHeader}>Advance Amount Details</Text>
+        {paymentDetails?.[0] && (
+          <View key={0} style={{}}>
+            <Text
+              style={{
+                position: 'absolute',
+                bottom: 35,
+                left: 200,
+                color: '#454545',
+                fontSize: 12,
+              }}>
+              {formatDate(paymentDetails[0].date)}
+            </Text>
+            <View>
+              <Text style={{color: 'green', fontWeight: '600'}}>
+                ₹{paymentDetails[0].advance_amount}
+              </Text>
+            </View>
+          </View>
         )}
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Deposit Details</Text>
-        {depositeDetails?.map((deposit, index) => (
-          <Text key={index} style={styles.label}>
-            {formatDate(deposit.date)}:{' '}
-            <Text style={styles.value}>
-              ₹{deposit.deposit_amount} ({deposit.reason})
+        <Text style={styles.sectionHeader}>Due Amount Details</Text>
+        {paymentDetails?.[0] && (
+          <View key={0} style={{}}>
+            <Text
+              style={{
+                position: 'absolute',
+                bottom: 35,
+                left: 200,
+                color: '#454545',
+                fontSize: 12,
+              }}>
+              {formatDate(paymentDetails[0].date)}
             </Text>
-          </Text>
-        ))}
+            <View>
+              <Text style={{color: 'green', fontWeight: '600'}}>
+                ₹{paymentDetails[0].due_amount}
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
 
       <View
@@ -404,7 +548,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-   
+
     textAlign: 'center',
     color: '#333',
   },
@@ -420,12 +564,12 @@ const styles = StyleSheet.create({
     // elevation: 3,
   },
   sectionHeader: {
-    fontSize: 18,
+    color: '#000',
     fontWeight: 'bold',
+    textDecorationLine: 'underline',
     marginBottom: 10,
-    color: '#eab308',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+
+   
     paddingBottom: 5,
   },
   label: {
