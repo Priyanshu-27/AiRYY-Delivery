@@ -32,7 +32,7 @@ const Checkbox = ({text, value, onPress}) => {
 
 const UserBill = ({route, navigation}) => {
   const {rental_id} = route.params;
-  
+
   const [rentalData, setRentalData] = useState(null);
 
   const [UPIMethod, setUPIMethod] = useState('QR Code');
@@ -44,8 +44,8 @@ const UserBill = ({route, navigation}) => {
   const [chequeChecked, setChequeChecked] = useState(false);
   const [mixChecked, setmixChecked] = useState(null);
   const [amount, setAmount] = useState(0);
-  const [rentalDate , setRentalDate] = useState(" ") ; 
-  const [depositeDate , setdepositeDate] = useState(" ") ; 
+  const [rentalDate, setRentalDate] = useState(' ');
+  const [depositeDate, setdepositeDate] = useState(' ');
   const [numberofpaymentsAmount, setnumberofpaymentsAmount] = useState(0);
   const [paymentDetails, setpaymentDetails] = useState([]);
   const [lastPaymentDetails, setlastPaymentDetails] = useState({});
@@ -53,6 +53,25 @@ const UserBill = ({route, navigation}) => {
   const [userDetails, setuserDetails] = useState([]);
   const [bikeDetails, setbikeDetails] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+
+  function formatTime(hours) {
+    if (hours < 24) {
+      return `${hours} hours`;
+    }
+
+    const days = Math.floor(hours / 24);
+    if (days < 30) {
+      return `${days} days`;
+    }
+
+    const months = Math.floor(days / 30); // Approximation for months
+    if (months < 12) {
+      return `${months} months`;
+    }
+
+    const years = Math.floor(months / 12);
+    return `${years} years`;
+  }
 
   const formatDate = dateString => {
     if (!dateString) return '';
@@ -101,12 +120,12 @@ const UserBill = ({route, navigation}) => {
         `http://${DOMAIN}/Delivery/lastPayment/?rental_id=${rental_id}`,
       );
 
-    
       const data = await response.json();
-     
+      console.log(data.duration);
       setRentalDate(data.rental_date);
       setdepositeDate(data.return_date);
       setRentalData(data);
+
       setdepositeDetails(data.deposits);
       setpaymentDetails(data.payments);
       setlastPaymentDetails(data.payments[data.payments.length - 1] || {});
@@ -340,6 +359,19 @@ const UserBill = ({route, navigation}) => {
           </Text>
           <Text style={{color: '#454545', fontSize: 13, fontWeight: '500'}}>
             Return: {formatDate(depositeDate)}
+          </Text>
+        </View>
+
+        <View
+          style={{
+            marginTop: 20,
+            borderRadius: 30,
+          }}>
+          <Text style={{color: '#454545', fontSize: 12, fontWeight: '500'}}>
+            Rental Duration:{' '}
+            {rentalData?.duration
+              ? formatTime(rentalData.duration)
+              : 'Calculating...'}
           </Text>
         </View>
       </View>
