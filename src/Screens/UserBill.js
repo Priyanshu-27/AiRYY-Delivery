@@ -187,7 +187,18 @@ const UserBill = ({route, navigation}) => {
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={fetchRentalData} />
       }>
-      <Text style={styles.header}>Bill Details</Text>
+      <View
+        style={{
+          backgroundColor: '#FFF',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 20,
+          marginBottom: 20,
+          borderRadius: 20,
+        }}>
+        <Text style={styles.header}>Bill Details</Text>
+      </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionHeader}>Rental Details</Text>
@@ -261,7 +272,7 @@ const UserBill = ({route, navigation}) => {
         style={styles.section}
         className="placeholder:text-black text-black">
         {/* Payment Methods */}
-        <Text style={styles.label}>Payment Methods:</Text>
+        <Text style={styles.sectionHeader}>Payment Methods:</Text>
         <View>
           {/* UPI */}
 
@@ -388,12 +399,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 40,
-    backgroundColor: '#FFF',
+    backgroundColor: '#fefce8',
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+   
     textAlign: 'center',
     color: '#333',
   },
@@ -406,13 +417,13 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 3,
+    // elevation: 3,
   },
   sectionHeader: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#FFD700',
+    color: '#eab308',
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
     paddingBottom: 5,
