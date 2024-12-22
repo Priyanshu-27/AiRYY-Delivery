@@ -28,7 +28,7 @@ const BikeAvailability = ({navigation}) => {
 
   const getBatteries = async () => {
     try {
-      const response = await fetch(`https://${DOMAIN}/Delivery/batteries/`);
+      const response = await fetch(`http://${DOMAIN}/Delivery/batteries/`);
       const data = await response.json();
 
       if (data && Array.isArray(data)) {
@@ -93,7 +93,7 @@ const BikeAvailability = ({navigation}) => {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `https://${DOMAIN}/Delivery/delivery-bikeInfo/`,
+        `http://${DOMAIN}/Delivery/delivery-bikeInfo/`,
       );
       const data = await response.json();
 
@@ -203,7 +203,7 @@ const BikeAvailability = ({navigation}) => {
   const handleswap = (phone, license_plate, battery) => {
     console.log(phone, license_plate, battery);
     // Make API request for battery swap
-    fetch(`https://${DOMAIN}/Delivery/delivery-battery-swap/`, {
+    fetch(`http://${DOMAIN}/Delivery/delivery-battery-swap/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

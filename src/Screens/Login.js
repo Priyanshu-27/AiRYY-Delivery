@@ -49,7 +49,7 @@ const LoginScreen = () => {
 
   //     // Send FCM token to the server
   //     const response = await fetch(
-  //       `https://${DOMAIN}/accounts/create_FMC/${phoneNumber}/`,
+  //       `http://${DOMAIN}/accounts/create_FMC/${phoneNumber}/`,
   //       {
   //         method: 'PUT',
   //         headers: {
@@ -89,7 +89,7 @@ const LoginScreen = () => {
     validateForm();
     setIsFormSubmitted(true);
     setIsLoading(true);
-    fetch(`https://${DOMAIN}/Team/verify_Team/`, {
+    fetch(`http://${DOMAIN}/Team/verify_Team/`, {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {

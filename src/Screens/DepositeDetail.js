@@ -47,7 +47,7 @@ const DepositeDetail = () => {
 
   const focusHandler = () => {
     console.log('Fetching bike data...');
-    fetch(`https://${DOMAIN}/Delivery/delivery-rental-list/`, {
+    fetch(`http://${DOMAIN}/Delivery/delivery-rental-list/`, {
       method: 'GET',
     })
       .then(response => response.json())
@@ -128,7 +128,7 @@ const DepositeDetail = () => {
 
     console.log(bodyData);
 
-    fetch(`https://${DOMAIN}/Delivery/delivery-rental/deposite/`, {
+    fetch(`http://${DOMAIN}/Delivery/delivery-rental/deposite/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -30,7 +30,7 @@ const Home = () => {
     dispatch(logout());
   }
   const fetchTeamData = () => {
-    fetch(`https://${DOMAIN}/Admin/staff-data/`, {
+    fetch(`http://${DOMAIN}/Admin/staff-data/`, {
       method: 'GET',
     })
       .then(response => response.json())

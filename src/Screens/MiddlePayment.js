@@ -107,7 +107,7 @@ const MiddlePayment = () => {
       booking_status: 'Paid',
     };
 
-    fetch(`https://${DOMAIN}/Delivery/middlePayment/`, {
+    fetch(`http://${DOMAIN}/Delivery/middlePayment/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -141,7 +141,7 @@ const MiddlePayment = () => {
     setRefreshing(false);
   }, []);
   const focusHandler = () => {
-    fetch(`https://${DOMAIN}/Delivery/delivery-rental-list/`, {
+    fetch(`http://${DOMAIN}/Delivery/delivery-rental-list/`, {
       method: 'GET',
     })
       .then(response => response.json())

@@ -107,7 +107,7 @@ const Emergency = () => {
           r_phone: contact.r_phoneNumber,
         };
 
-        const response = await fetch(`https://${DOMAIN}/Bike/emergency_data/`, {
+        const response = await fetch(`http://${DOMAIN}/Bike/emergency_data/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

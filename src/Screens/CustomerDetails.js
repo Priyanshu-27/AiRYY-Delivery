@@ -111,7 +111,7 @@ const CustomerDetails = () => {
 
     try {
       const response = await fetch(
-        `https://${DOMAIN}/accounts/CreateDeliveryBoy/`,
+        `http://${DOMAIN}/accounts/CreateDeliveryBoy/`,
         {
           method: 'PUT',
           headers: {
@@ -153,7 +153,7 @@ const CustomerDetails = () => {
     setUserNotFound(false);
     try {
       const response = await fetch(
-        `https://${DOMAIN}/accounts/CreateDeliveryBoy/?phone=${phone}`,
+        `http://${DOMAIN}/accounts/CreateDeliveryBoy/?phone=${phone}`,
         {
           method: 'GET',
           headers: {
@@ -213,12 +213,12 @@ const CustomerDetails = () => {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `https://${DOMAIN}/Bike/usercount/${phoneNumber}/`,
+        `http://${DOMAIN}/Bike/usercount/${phoneNumber}/`,
       );
       const data = await response.json();
       setUserCount(data);
       const response2 = await fetch(
-        `https://${DOMAIN}/User/Profile/${phoneNumber}/`,
+        `http://${DOMAIN}/User/Profile/${phoneNumber}/`,
       );
       const data2 = await response2.json();
 
@@ -228,7 +228,7 @@ const CustomerDetails = () => {
       //  else {
       //   // otp logic
       //   // const response = await fetch(
-      //   //   `https://${DOMAIN}/Bike/sendotp/${phoneNumber}/`,
+      //   //   `http://${DOMAIN}/Bike/sendotp/${phoneNumber}/`,
       //   // );
       // }
     } catch (error) {

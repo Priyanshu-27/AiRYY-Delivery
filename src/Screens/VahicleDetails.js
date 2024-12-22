@@ -95,7 +95,7 @@ const VehicleDetails = () => {
 
   const getBatteries = async () => {
     try {
-      const response = await fetch(`https://${DOMAIN}/Delivery/batteries/`);
+      const response = await fetch(`http://${DOMAIN}/Delivery/batteries/`);
       const data = await response.json();
 
       if (data && Array.isArray(data)) {
@@ -116,7 +116,7 @@ const VehicleDetails = () => {
   const getBikes = async () => {
     try {
       const response = await fetch(
-        `https://${DOMAIN}/Delivery_Bikes/delivery-bikes/`,
+        `http://${DOMAIN}/Delivery_Bikes/delivery-bikes/`,
       );
       const data = await response.json();
 
@@ -221,7 +221,7 @@ const VehicleDetails = () => {
     console.log(data);
     setIsLoading(true);
 
-    fetch(`https://${DOMAIN}/Delivery/delivery-rental/create/`, {
+    fetch(`http://${DOMAIN}/Delivery/delivery-rental/create/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
