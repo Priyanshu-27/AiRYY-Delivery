@@ -68,9 +68,9 @@ const CustomerDetails = () => {
       setPhoneError('');
     }
 
-    if (email && !validateEmail(email)) {
+    if (email) {
       setEmailError('Please enter a valid email address');
-      isValid = false;
+      
     } else {
       setEmailError('');
     }
@@ -81,7 +81,6 @@ const CustomerDetails = () => {
       !phoneNumber ||
       !selectedCity ||
       !selectedState ||
-      !email ||
       !gender ||
       !aadharNumber
     ) {
@@ -177,7 +176,13 @@ const CustomerDetails = () => {
         setFirstName(firstName);
         setLastName(lastName);
         setSelectedCity(responseData.user_City);
-        setGender(responseData.user_Gender);
+        setGender( responseData.user_Gender == 'Male'
+          ? 'male'
+          : responseData.user_Gender == 'Female'
+          ? 'female'
+          : responseData.user_Gender == 'Other'
+          ? 'other'
+          : '',);
         setSelectedState(responseData.user_State);
 
         ToastAndroid.show(`User found !`, ToastAndroid.SHORT);
@@ -254,12 +259,12 @@ const CustomerDetails = () => {
       setEmail(User.email);
       setSelectedCity(User.City);
       setGender(
-        User.Gender == 'male'
-          ? 'Male'
-          : User.Gender == 'female'
-          ? 'Female'
-          : User.Gender == 'other'
-          ? 'Other'
+        User.Gender == 'Male'
+          ? 'male'
+          : User.Gender == 'Female'
+          ? 'female'
+          : User.Gender == 'Other'
+          ? 'other'
           : '',
       );
       setSelectedState(User.State);

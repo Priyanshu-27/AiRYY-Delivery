@@ -31,8 +31,7 @@ const Checkbox = ({text, value, onPress}) => {
 
 
 const UserBill = ({route, navigation}) => {
-  const {rental_id} = route.params;
-
+  const {rental_id} = route.params; 
   const [rentalData, setRentalData] = useState(null);
 
   const [UPIMethod, setUPIMethod] = useState('QR Code');
@@ -121,7 +120,7 @@ const UserBill = ({route, navigation}) => {
       );
 
       const data = await response.json();
-      console.log(data.duration);
+      console.log(data);
       setRentalDate(data.rental_date);
       setdepositeDate(data.return_date);
       setRentalData(data);
@@ -132,6 +131,7 @@ const UserBill = ({route, navigation}) => {
       setuserDetails(data.user.user);
       setbikeDetails(data.bike);
       setnumberofpaymentsAmount(data.payments.length);
+      console.log(data.payments[data.payments.length - 1]?.due_amount)
       setDueAmount(data.payments[data.payments.length - 1]?.due_amount || 0);
     } catch (error) {
       console.error('Error fetching rental data:', error);
@@ -139,9 +139,11 @@ const UserBill = ({route, navigation}) => {
       setRefreshing(false);
     }
   };
+
   useEffect(() => {
     fetchRentalData();
   }, []);
+  
   useEffect(() => {
     const numericUPI = Number(upi) || 0;
     const numericCash = Number(cash) || 0;
@@ -179,33 +181,33 @@ const UserBill = ({route, navigation}) => {
 
     console.log(paymentPayload);
 
-    // try {
-    //   const response = await fetch(
-    //     `http://${DOMAIN}/Delivery/lastPayment/`,
-    //     {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify(paymentPayload),
-    //     },
-    //   );
+    try {
+      const response = await fetch(
+        `http://${DOMAIN}/Delivery/lastPayment/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(paymentPayload),
+        },
+      );
 
-    //   if (response.ok) {
-    //     const responseData = await response.json();
-    //     Alert.alert('Payment Successful', 'The payment has been recorded.');
-    //     navigation.navigate('DrawerNavigator');
-    //   } else {
-    //     const errorData = await response.json();
-    //     Alert.alert(
-    //       'Payment Failed',
-    //       errorData.message || 'An error occurred during payment submission.',
-    //     );
-    //   }
-    // } catch (error) {
-    //   console.error('Error submitting payment:', error);
-    //   Alert.alert('Payment Failed', 'An error occurred. Please try again.');
-    // }
+      if (response.ok) {
+        const responseData = await response.json();
+        Alert.alert('Payment Successful', 'The payment has been recorded.');
+        navigation.navigate('DrawerNavigator');
+      } else {
+        const errorData = await response.json();
+        Alert.alert(
+          'Payment Failed',
+          errorData.message || 'An error occurred during payment submission.',
+        );
+      }
+    } catch (error) {
+      console.error('Error submitting payment:', error);
+      Alert.alert('Payment Failed', 'An error occurred. Please try again.');
+    }
   };
 
   return (
@@ -342,7 +344,7 @@ const UserBill = ({route, navigation}) => {
                 borderRadius: 30,
               }}>
               <Text style={{color: '#454545', fontSize: 12, fontWeight: '500'}}>
-                Free Batteries : 40
+                Free Batteries : {rentalData?.battery_free}
               </Text>
             </View>
           </View>
@@ -433,11 +435,11 @@ const UserBill = ({route, navigation}) => {
                 color: '#454545',
                 fontSize: 12,
               }}>
-              {formatDate(paymentDetails[0].date)}
+              {formatDate(new Date())}
             </Text>
             <View>
               <Text style={{color: 'green', fontWeight: '600'}}>
-                ₹{paymentDetails[0].due_amount}
+                ₹{dueAmount}
               </Text>
             </View>
           </View>

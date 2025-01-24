@@ -17,7 +17,7 @@ npm start
 # OR using Yarn
 yarn start
 ```
-
+C:\Airyy\AiRYY-Delivery\android\app\build\outputs\apk\release\
 C:\Airyy\AiRYY-Delivery\android\app\build\outputs\apk\release\app-release.apk
 C:\Airyy\AiRYY-Delivery\android\app\build\outputs\apk\release\app-release.apk && npm start
 cd android &&  gradlew assembleRelease && cd..

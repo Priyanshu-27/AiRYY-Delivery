@@ -15,7 +15,6 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {DOMAIN} from '@env';
 
 const BikeAvailability = ({navigation}) => {
-  
   const [AssignedDetails, setAssignedDetails] = useState([]);
   const [AssignedBikesNumber, setAssignedBikesNumber] = useState(0);
   const [FilteredassignedDetails, setFilteredassignedDetails] = useState([]);
@@ -99,6 +98,7 @@ const BikeAvailability = ({navigation}) => {
 
       if (Array.isArray(data.rentals)) {
         setAssignedDetails(data.rentals);
+        console.log(data.rentals);
         setFilteredassignedDetails(data.rentals);
 
         setAssignedBikesNumber(data.rentals.length);
@@ -115,6 +115,7 @@ const BikeAvailability = ({navigation}) => {
       setRefreshing(false);
     }
   };
+
   useEffect(() => {
     const focusHandler = navigation.addListener('focus', () => {
       fetchData();
@@ -177,10 +178,18 @@ const BikeAvailability = ({navigation}) => {
 
   const formatDate = dateString => {
     const date = new Date(dateString);
+
     const day = String(date.getUTCDate()).padStart(2, '0');
     const month = String(date.getUTCMonth() + 1).padStart(2, '0');
     const year = date.getUTCFullYear();
-    return `${day}-${month}-${year}`;
+
+    let hours = date.getUTCHours();
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    hours = hours % 12 || 12; // Convert 0 or 24 to 12 for AM/PM format
+
+    return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
   };
 
   const convertHoursToDaysHours = totalHours => {
@@ -286,7 +295,7 @@ const BikeAvailability = ({navigation}) => {
                 justifyContent: 'space-evenly',
                 marginTop: 20,
               }}>
-              <Text className='text-black'>{15 - AssignedBikesNumber}</Text>
+              <Text className="text-black">{15 - AssignedBikesNumber}</Text>
             </View>
           </View>
           <View style={[styles.summaryCard, styles.AssignedDetailsd]}>
@@ -310,7 +319,7 @@ const BikeAvailability = ({navigation}) => {
                 justifyContent: 'space-evenly',
                 marginTop: 20,
               }}>
-              <Text className='text-black'>{AssignedBikesNumber}</Text>
+              <Text className="text-black">{AssignedBikesNumber}</Text>
             </View>
           </View>
         </View>
@@ -369,14 +378,7 @@ const BikeAvailability = ({navigation}) => {
                     iconName="time-outline"
                     iconLib="Ionicons"
                     label="Rental Time"
-                    value={new Date(rental?.rental_date).toLocaleTimeString(
-                      'en-US',
-                      {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true,
-                      },
-                    )}
+                    value={formatDate(rental?.rental_date)}
                   />
                   <InfoRow
                     iconName="battery-charging-outline"
@@ -394,7 +396,12 @@ const BikeAvailability = ({navigation}) => {
                     iconName="swap-horizontal-outline"
                     iconLib="Ionicons"
                     label="Last Swapped"
-                    value={new Date(rentalItem?.swapped_at).toLocaleString()}
+                    value={
+                      formatDate(rentalItem?.swapped_at) ===
+                      formatDate(rental?.rental_date)
+                        ? 'Not Swapped Yet'
+                        : formatDate(rentalItem?.swapped_at)
+                    }
                   />
                   <InfoRow
                     iconName="swap-horizontal-outline"
@@ -405,22 +412,34 @@ const BikeAvailability = ({navigation}) => {
                 </View>
                 <View
                   className="flex flex-row justify-between"
-                  style={{marginTop: 20}}>
+                  style={{marginTop: 10}}>
                   <TouchableOpacity
-                    className="p-5"
-                    style={[styles.button, {marginRight: 10}]} // Adding margin to the right for spacing
-                    onPress={() => navigation.navigate('DepositeDetail')}>
-                    <Text style={styles.buttonText}>Go to Deposite</Text>
+                    className="p-14"
+                    style={[styles.button, {}]}
+                    onPress={() => {
+                      console.log(rental?.id);
+                      navigation.navigate('Extend', {
+                        rental: rental,
+                      });
+                    }}>
+                    <Text style={{...styles.buttonText}}>Extend</Text>
                   </TouchableOpacity>
-
                   <TouchableOpacity
-                    className="p-5"
+                    className="p-7"
                     style={[styles.button, {marginLeft: 10}]} // Adding margin to the left for spacing
                     onPress={() => {
                       getBatteries(); // Fetch batteries
                       setopenDropDown(prev => !prev); // Toggle the dropdown state
                     }}>
                     <Text style={styles.buttonText}>Swap A Battery</Text>
+                  </TouchableOpacity>
+                </View>
+                <View>
+                  <TouchableOpacity
+                    className="p-5"
+                    style={[styles.button, {marginRight: 10}]} // Adding margin to the right for spacing
+                    onPress={() => navigation.navigate('DepositeDetail')}>
+                    <Text style={styles.buttonText}>Go to Deposite</Text>
                   </TouchableOpacity>
                 </View>
                 {openDropDown && (
@@ -432,6 +451,8 @@ const BikeAvailability = ({navigation}) => {
                       data={batteryList}
                       search
                       searchField="label"
+                      searchPlaceholderTextColor="#000"
+                      inputSearchStyle={{color: '#000'}}
                       itemTextStyle={{color: '#000'}}
                       placeholderTextColor="#000"
                       labelField="label"

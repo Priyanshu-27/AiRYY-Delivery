@@ -41,7 +41,7 @@ const Checkbox = ({text, value, onPress}) => {
   );
 };
 
-const VehicleDetails = () => {
+const Extend = ({route}) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const [Bikeid, setBikeid] = useState('');
@@ -50,7 +50,6 @@ const VehicleDetails = () => {
   const [Amount, setAmount] = useState(0);
   const [battery_free, setbattery_free] = useState(0);
   const phone = useSelector(state => state.counter.phone);
-  const route = useRoute();
 
   const [AdvancePay, setAdvancePay] = useState('NO');
   const [AdvancePayUPI, setAdvancePayUPI] = useState(0);
@@ -69,7 +68,7 @@ const VehicleDetails = () => {
   ]);
   const [selectedBike, setSelectedBike] = useState('Select Bike');
 
-  const {phoneNumber} = route.params;
+  const {rental} = route.params;
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [TimeTaken, setTimeTaken] = useState(null);
@@ -83,58 +82,6 @@ const VehicleDetails = () => {
   const [KMError, setKMError] = useState('');
   const [BikePictureError, setBikePictureError] = useState('');
   const [BikeReadingError, setBikeReadingError] = useState('');
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    getBatteries();
-    getBikes();
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
-  }, []);
-
-  const getBatteries = async () => {
-    try {
-      const response = await fetch(`http://${DOMAIN}/Delivery/batteries/`);
-      const data = await response.json();
-
-      if (data && Array.isArray(data)) {
-        setBatteryList([
-          {label: 'Select Battery', value: 'Select Battery'}, // Default option
-          ...data.map(battery => ({
-            label: `${battery.battery_id} - ${battery.charging_percentage}%`, // Displaying both battery ID and charging percentage
-            value: battery.battery_id, // Using battery_id as value
-          })),
-        ]);
-      } else {
-        console.error('Unexpected data format:', data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const getBikes = async () => {
-    try {
-      const response = await fetch(
-        `http://${DOMAIN}/Delivery_Bikes/delivery-bikes/`,
-      );
-      const data = await response.json();
-
-      if (data && Array.isArray(data)) {
-        setBikeList([
-          {label: 'Select bike', value: 'Select bike'}, // Default option
-          ...data.map(bike => ({
-            label: `${bike.license_plate} - ${bike.type}`, // Displaying both bike ID and charging percentage
-            value: bike.license_plate, // Using bike_id as value
-          })),
-        ]);
-      } else {
-        console.error('Unexpected data format:', data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const handleSubmit = () => {
     // if (!validateFields()) {
@@ -151,11 +98,8 @@ const VehicleDetails = () => {
     }
 
     const data = {
-      phone: phoneNumber,
-      license_plate: selectedBike,
       duration: timeInHours,
       rate_per_duration: Amount,
-      battery_id: selectedBattery,
       mode_of_rental: TimeTakenUnit,
       battery_free: battery_free,
     };
@@ -178,7 +122,7 @@ const VehicleDetails = () => {
           : 'upi'
         : 'upi';
     } else {
-      data.booking_status = 'Start';
+      data.booking_status = 'Extended';
       data.total_amount = 0;
       data.advance_upi_amount = 0;
       data.advance_cash_amount = 0;
@@ -199,7 +143,7 @@ const VehicleDetails = () => {
 
     if (ReturnAmount == 'ReturnAmount') {
       (data.date = new Date().toISOString().split('T')[0]),
-        (data.reason = 'Have to return'),
+        (data.reason = 'Have to return extended'),
         (data.mode_of_deposit = ['upi', 'cash', 'mix'].includes(
           ReturnAmountUPI > 0 && ReturnAmountCash > 0
             ? 'mix'
@@ -221,7 +165,7 @@ const VehicleDetails = () => {
     console.log(data);
     setIsLoading(true);
 
-    fetch(`http://${DOMAIN}/Delivery/delivery-rental/create/`, {
+    fetch(`http://${DOMAIN}/Delivery/ExtendRental/${rental.id}/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -236,8 +180,8 @@ const VehicleDetails = () => {
         return response.json();
       })
       .then(responseJson => {
-        if (responseJson.rental) {
-          Alert.alert('Done', `Give this Bike ${responseJson.rental}`, [
+        if (responseJson.message) {
+          Alert.alert('Done', `Extended the Bike ${rental.bike.license_plate} Duration`, [
             {
               text: 'OK',
               onPress: () => {
@@ -246,7 +190,7 @@ const VehicleDetails = () => {
               },
             },
           ]);
-        } else if (responseJson.Error) {
+        } else if (responseJson.error) {
           Alert.alert(`Error`, `Try again! Error: ${responseJson.Error}`, [
             {
               text: 'OK',
@@ -309,17 +253,6 @@ const VehicleDetails = () => {
       setReturnAmount(ReturnAmount === 'ReturnAmount' ? 'NO' : 'ReturnAmount');
     }
   };
-  const [value, setValue] = useState(null);
-  const [BikeData, setBikeData] = useState([]);
-
-  useEffect(() => {
-    const focusHandler = navigation.addListener('focus', () => {
-      getBatteries();
-      getBikes();
-    });
-
-    return focusHandler;
-  }, [BikeData, navigation, refreshing]);
 
   return (
     <View style={styles.container}>
@@ -332,53 +265,16 @@ const VehicleDetails = () => {
         />
       </View>
 
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        style={styles.Scrollcontainer}>
+      <ScrollView style={styles.Scrollcontainer}>
         <View style={styles.box}>
           {Bikeiderror ? (
             <Text style={styles.errorText}>{Bikeiderror}</Text>
           ) : null}
-          <Dropdown
-            style={styles.dropdown}
-            search
-            searchField="label"
-            searchPlaceholderTextColor="#000"
-            inputSearchStyle={{color: '#000'}}
-            searchQuery={Bikeid}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            data={BikeList}
-            itemTextStyle={{color: '#000'}}
-            placeholderTextColor="#000"
-            labelField="label"
-            valueField="value"
-            placeholder="Select Bike"
-            searchPlaceholder="Search..."
-            onChange={item => {
-              setSelectedBike(item.value);
-            }}
-          />
-          <Dropdown
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            searchField="label"
-            searchPlaceholderTextColor="#000"
-            inputSearchStyle={{color: '#000'}}
-            search
-            data={batteryList}
-            itemTextStyle={{color: '#000'}}
-            placeholderTextColor="#000"
-            labelField="label"
-            valueField="value"
-            placeholder="Select Battery"
-            searchPlaceholder="Search..."
-            onChange={item => {
-              setSelectedBattery(item.value);
-            }}
+
+          <TextInput
+            value={rental.bike.license_plate}
+            editable={false}
+            style={styles.inputKm}
           />
 
           {TimeTakenerror ? (
@@ -687,4 +583,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VehicleDetails;
+export default Extend;

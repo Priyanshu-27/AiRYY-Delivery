@@ -11,6 +11,7 @@ import BikeAvailability from '../Screens/BikeAvailability';
 import VehicleDetails from '../Screens/VahicleDetails';
 import UserBill from '../Screens/UserBill';
 import MiddlePayment from '../Screens/MiddlePayment';
+import Extend from '../Screens/Extend';
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
@@ -21,7 +22,9 @@ const Navigation = () => {
       <Stack.Navigator screenOptions={{headerShown: false}}>
         {loggedIn ? (
           <>
+          
             <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
+            <Stack.Screen name="Extend" component={Extend} />
             <Stack.Screen name="UserBill" component={UserBill} />
             <Stack.Screen name="CustomerDetails" component={CustomerDetails} />
             <Stack.Screen name="DepositeDetail" component={DepositeDetail} />
