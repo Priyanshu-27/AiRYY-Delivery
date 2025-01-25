@@ -8,6 +8,7 @@ import {
   RefreshControl,
   TextInput,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -278,7 +279,7 @@ const BikeAvailability = ({navigation}) => {
             <View
               style={{
                 backgroundColor: '#f0fdf4',
-                paddingHorizontal: 8,
+                paddingHorizontal: 19,
                 paddingVertical: 8,
                 borderRadius: 12,
                 position: 'absolute',
@@ -293,7 +294,7 @@ const BikeAvailability = ({navigation}) => {
               style={{
                 flexDirection: 'Column',
                 justifyContent: 'space-evenly',
-                marginTop: 20,
+                marginTop: 30,
               }}>
               <Text className="text-black">{15 - AssignedBikesNumber}</Text>
             </View>
@@ -302,7 +303,7 @@ const BikeAvailability = ({navigation}) => {
             <View
               style={{
                 backgroundColor: '#fef2f2',
-                paddingHorizontal: 8,
+                paddingHorizontal: 19,
                 paddingVertical: 8,
                 borderRadius: 12,
                 position: 'absolute',
@@ -317,7 +318,7 @@ const BikeAvailability = ({navigation}) => {
               style={{
                 flexDirection: 'Column',
                 justifyContent: 'space-evenly',
-                marginTop: 20,
+                marginTop: 30,
               }}>
               <Text className="text-black">{AssignedBikesNumber}</Text>
             </View>
@@ -335,9 +336,45 @@ const BikeAvailability = ({navigation}) => {
               <View key={index} style={styles.card}>
                 <View
                   style={{
+                    flexDirection: 'row',
+                    justifyContent: 'flex-end',
+                  }}>
+                  <TouchableOpacity
+                    className="p-5"
+                    style={{
+                      borderWidth: 1,
+                      borderRadius: 50,
+                      borderColor: '#e8e9eb',
+                      backgroundColor: '#ffff',
+
+                      paddingHorizontal: 15,
+                      paddingVertical: 10,
+                      marginBottom: 10,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}
+                    onPress={() => navigation.navigate('DepositeDetail')}>
+                    <Text
+                      style={{
+                        color: '#000',
+                        fontSize: 12,
+                        fontFamily: 'Poppins Bold',
+                      }}>
+                      Go to Deposite
+                    </Text>
+                    <Ionicons
+                      name="arrow-forward-outline"
+                      size={12}
+                      style={{color: '#000', marginLeft: 8}}
+                    />
+                  </TouchableOpacity>
+                </View>
+                <View
+                  style={{
                     backgroundColor: '#fefce8',
-                    paddingHorizontal: 10,
-                    paddingVertical: 10,
+                    paddingHorizontal: 20,
+                    paddingVertical: 30,
+                    borderRadius: 20,
                   }}>
                   {/* User Details */}
                   <InfoRow
@@ -411,37 +448,57 @@ const BikeAvailability = ({navigation}) => {
                   />
                 </View>
                 <View
-                  className="flex flex-row justify-between"
-                  style={{marginTop: 10}}>
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                    // marginLeft: 30,
+                    // marginRight: 30,
+                    marginTop: 30,
+                    marginBottom: 10,
+                  }}>
                   <TouchableOpacity
-                    className="p-14"
-                    style={[styles.button, {}]}
+                    style={{
+                      backgroundColor: '#fff',
+                      borderWidth: 1,
+
+                      borderColor: '#f5f7f9',
+                      borderRadius: 20,
+                      paddingHorizontal: 25,
+                      paddingVertical: 12,
+                    }}
                     onPress={() => {
                       console.log(rental?.id);
                       navigation.navigate('Extend', {
                         rental: rental,
                       });
                     }}>
-                    <Text style={{...styles.buttonText}}>Extend</Text>
+                    <Text
+                      style={{fontSize: 13, color: '#000', fontWeight: 'bold'}}>
+                      Extend
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    className="p-7"
-                    style={[styles.button, {marginLeft: 10}]} // Adding margin to the left for spacing
+                    style={{
+                      backgroundColor: '#fff',
+                      borderWidth: 1,
+
+                      borderColor: '#f5f7f9',
+                      borderRadius: 20,
+                      paddingHorizontal: 25,
+                      paddingVertical: 10,
+                    }} // Adding margin to the left for spacing
                     onPress={() => {
                       getBatteries(); // Fetch batteries
                       setopenDropDown(prev => !prev); // Toggle the dropdown state
                     }}>
-                    <Text style={styles.buttonText}>Swap A Battery</Text>
+                    <Text
+                      style={{fontSize: 13, color: '#000', fontWeight: 'bold'}}>
+                      Swap Battery
+                    </Text>
                   </TouchableOpacity>
                 </View>
-                <View>
-                  <TouchableOpacity
-                    className="p-5"
-                    style={[styles.button, {marginRight: 10}]} // Adding margin to the right for spacing
-                    onPress={() => navigation.navigate('DepositeDetail')}>
-                    <Text style={styles.buttonText}>Go to Deposite</Text>
-                  </TouchableOpacity>
-                </View>
+
                 {openDropDown && (
                   <View>
                     <Dropdown
@@ -551,10 +608,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8d7da',
   },
   summaryText: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#000',
     fontWeight: 'bold',
     marginBottom: 0,
+   
+    fontFamily: 'Poppins Bold',
     letterSpacing: 1,
   },
   count: {
@@ -569,14 +628,20 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+
+    borderColor: '#f5f7f9',
     padding: 15,
-    marginBottom: 10,
+    marginBottom: 38,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 3,
+
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    // elevation: 3,
   },
   rowContainer: {
     flexDirection: 'row',
@@ -605,18 +670,18 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     flexShrink: 1,
   },
-  button: {
-    marginTop: 10,
-    backgroundColor: '#000',
-    paddingVertical: 10,
-    borderRadius: 15,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#facc15',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+  // button: {
+  //   marginTop: 10,
+  //   backgroundColor: '#000',
+  //   paddingVertical: 10,
+  //   borderRadius: 15,
+  //   alignItems: 'center',
+  // },
+  // buttonText: {
+  //   color: '#facc15',
+  //   fontSize: 13,
+  //   fontWeight: 'bold',
+  // },
   icon: {
     marginRight: 20,
     color: '#eab308',

@@ -192,6 +192,7 @@ const MiddlePayment = () => {
             backgroundColor: '#FFF',
             padding: 20,
             marginTop: 20,
+            marginBottom:20 , 
             borderWidth: 1,
             borderColor: '#f1f5f9',
             borderRadius: 30,
