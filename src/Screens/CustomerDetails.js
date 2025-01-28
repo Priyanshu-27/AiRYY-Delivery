@@ -19,271 +19,300 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
 import {STATES_AND_CITIES} from '../utils/SatesCities';
 import {DOMAIN} from '@env';
-const CustomerDetails = () => {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [UserNotFound, setUserNotFound] = useState(true);
+          const CustomerDetails = () => {
+            const [phoneNumber, setPhoneNumber] = useState('');
+            const [UserNotFound, setUserNotFound] = useState(true);
+          const [aadharError, setAadharError] = useState('');
+            const [UserCount, setUserCount] = useState(0);
+            const [firstName, setFirstName] = useState('');
+            const [lastName, setLastName] = useState('');
+            const [email, setEmail] = useState('');
+            const [gender, setGender] = useState('');
+            const [secondaryPhone, setSecondaryPhone] = useState('');
+            const [aadharNumber, setAadharNumber] = useState('');
+            const [PanNumber, setPanNumber] = useState('');
+            const [selectedState, setSelectedState] = useState('');
+            const [selectedCity, setSelectedCity] = useState('');
+            const [phoneError, setPhoneError] = useState('');
+            const [SecondaryphoneError, setSecondaryPhoneError] = useState('');
+            const [emailError, setEmailError] = useState('');
+            const [isLoading, setIsLoading] = useState(false);
+            const [Update, setUpdate] = useState(false);
+            const [openModel, setopenModel] = useState(false);
+            const [IGotTheuser, setIGotTheuser] = useState(false);
 
-  const [UserCount, setUserCount] = useState(0);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [gender, setGender] = useState('');
-  const [secondaryPhone, setSecondaryPhone] = useState('');
-  const [aadharNumber, setAadharNumber] = useState('');
-  const [PanNumber, setPanNumber] = useState('');
-  const [selectedState, setSelectedState] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
-  const [phoneError, setPhoneError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [Update, setUpdate] = useState(false);
-  const [openModel, setopenModel] = useState(false);
-  const [IGotTheuser, setIGotTheuser] = useState(false);
+            const [licenseNumber, setLicenseNumber] = useState('');
+            const [voterId, setVoterId] = useState('');
 
-  const [licenseNumber, setLicenseNumber] = useState('');
-  const [voterId, setVoterId] = useState('');
+            const navigation = useNavigation();
 
-  const navigation = useNavigation();
+            const selectedStateData = STATES_AND_CITIES.find(
+              state => state.name === selectedState,
+            );
+            const cities = selectedStateData ? selectedStateData.cities : [];
 
-  const selectedStateData = STATES_AND_CITIES.find(
-    state => state.name === selectedState,
-  );
-  const cities = selectedStateData ? selectedStateData.cities : [];
+            const validatePhone = phone => /^[6-9]\d{9}$/.test(phone);
+            const validateSecondaryPhone = secondaryPhone =>
+              /^[6-9]\d{9}$/.test(secondaryPhone);
+         const validateEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
-  const validatePhone = phone => /^[6-9]\d{9}$/.test(phone);
-  const validateEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+// Add a handler for email changes that trims whitespace
+const handleEmailChange = (value) => {
+    // Trim whitespace when setting the email
+    setEmail(value.trim());
+};
+            const validateAadhar = aadhar => /^\d{12}$/.test(aadhar);
 
-  const handleSubmit = async () => {
-    if (!selectedState || !selectedCity) {
-      Alert.alert('Error', 'Please select a state and city.');
-      return;
-    }
+            const handleSubmit = async () => {
+              if (!selectedState || !selectedCity) {
+                Alert.alert('Error', 'Please select a state and city.');
+                return;
+              }
 
-    let isValid = true;
+              let isValid = true;
 
-    if (!validatePhone(phoneNumber)) {
-      setPhoneError('Please enter a valid 10-digit phone number');
-      isValid = false;
-    } else {
-      setPhoneError('');
-    }
+              if (!validatePhone(phoneNumber)) {
+                setPhoneError('Please enter a valid 10-digit phone number');
+                isValid = false;
+              } else {
+                setPhoneError('');
+              }
 
-    if (email) {
-      setEmailError('Please enter a valid email address');
-      
-    } else {
-      setEmailError('');
-    }
+              if (!validatePhone(secondaryPhone)) {
+                setSecondaryPhoneError('Please  phone number');
+                isValid = false;
+              } else {
+                setSecondaryPhoneError('');
+              }
 
-    if (
-      !firstName ||
-      !lastName ||
-      !phoneNumber ||
-      !selectedCity ||
-      !selectedState ||
-      !gender ||
-      !aadharNumber
-    ) {
-      Alert.alert('Error', 'Please fill in all required fields.');
-      return;
-    }
+             if (email && !validateEmail(email)) {
+               setEmailError('Please enter a valid email address');
+               isValid = false;
+             } else {
+               setEmailError('');
+             }
 
-    if (!isValid) return;
+                if (!validateAadhar(aadharNumber)) {
+                  setAadharError('Please enter a valid 12-digit Aadhar number');
+                  isValid = false;
+                } else {
+                  setAadharError('');
+                }
 
-    const userData = {
-      phone: phoneNumber,
-      fname: firstName,
-      lname: lastName,
-      user_City: selectedCity,
-      user_State: selectedState,
-      user_email: email || null,
-      user_Gender: gender=='male'?"Male":gender=='female'?"Female":"Other",
-      secondary_phone: secondaryPhone || null,
-      aadhar_number: aadharNumber || null,
-      license_number: licenseNumber || null,
-      voter_id: voterId || null,
-      pan_number: PanNumber || null,
-    };
+              if (
+                !firstName ||
+                !lastName ||
+                !phoneNumber ||
+                !selectedCity ||
+                !selectedState ||
+                !gender ||
+                !aadharNumber
+              ) {
+                Alert.alert('Error', 'Please fill in all required fields.');
+                return;
+              }
 
-  console.log(userData)
-    setIsLoading(true);
+              if (!isValid) return;
 
-    try {
-      const response = await fetch(
-        `http://${DOMAIN}/accounts/CreateDeliveryBoy/`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userData), 
-        },
-      );
+              const userData = {
+                phone: phoneNumber,
+                fname: firstName,
+                lname: lastName,
+                user_City: selectedCity,
+                user_State: selectedState,
+                user_email: email ? email.trim() : null,
+                user_Gender:
+                  gender == 'male'
+                    ? 'Male'
+                    : gender == 'female'
+                    ? 'Female'
+                    : 'Other',
+                secondary_phone: secondaryPhone || null,
+                aadhar_number: aadharNumber || null,
+                license_number: licenseNumber || null,
+                voter_id: voterId || null,
+                pan_number: PanNumber || null,
+              };
 
-      const responseData = await response.json();
+            console.log(userData)
+              setIsLoading(true);
 
-      if (response.ok) {
-        // Show Toast for success
-        ToastAndroid.show('User created successfully!', ToastAndroid.SHORT);
-        if (EmergencyCOntact) {
-          navigation.navigate('VehicleDetails', {
-            phoneNumber: phoneNumber,
-          });
-        } else {
-          navigation.navigate('Emergency', {
-            phoneNumber: phoneNumber,
-          });
-        }
+              try {
+                const response = await fetch(
+                  `http://${DOMAIN}/accounts/CreateDeliveryBoy/`,
+                  {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData), 
+                  },
+                );
 
-        // navigation.navigate('NextScreen', {userData: responseData});
-      } else {
-        Alert.alert('Error', responseData.message || 'Failed to create user');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', 'Network request failed.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+                const responseData = await response.json();
 
-  const handleVerifyUser = async phone => {
-    setIsLoading(true);
-    setUserNotFound(false);
-    try {
-      const response = await fetch(
-        `http://${DOMAIN}/accounts/CreateDeliveryBoy/?phone=${phone}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
+                if (response.ok) {
+                  // Show Toast for success
+                  ToastAndroid.show('User created successfully!', ToastAndroid.SHORT);
+                  if (EmergencyCOntact) {
+                    navigation.navigate('VehicleDetails', {
+                      phoneNumber: phoneNumber,
+                    });
+                  } else {
+                    navigation.navigate('Emergency', {
+                      phoneNumber: phoneNumber,
+                    });
+                  }
 
-      const responseData = await response.json();
+                  // navigation.navigate('NextScreen', {userData: responseData});
+                } else {
+                  Alert.alert('Error', responseData.message || 'Failed to create user');
+                }
+              } catch (error) {
+                console.error('Error:', error);
+                Alert.alert('Error', 'Network request failed.');
+              } finally {
+                setIsLoading(false);
+              }
+            };
 
-      if (response.ok && responseData.user_phone) {
-        console.log(responseData);
-        setIGotTheuser(true);
-        setUpdate(true);
-        setEmail(responseData.user_email);
-        setAadharNumber(responseData.aadhar_number);
-        setPanNumber(responseData.pan_number);
-        setSecondaryPhone(responseData.secondary_phone);
-        setPhoneNumber(responseData.user_phone);
-        const [firstName, lastName] = responseData.user_name.split(' ');
-        setFirstName(firstName);
-        setLastName(lastName);
-        setSelectedCity(responseData.user_City);
-        setGender( responseData.user_Gender == 'Male'
-          ? 'male'
-          : responseData.user_Gender == 'Female'
-          ? 'female'
-          : responseData.user_Gender == 'Other'
-          ? 'other'
-          : '',);
-        setSelectedState(responseData.user_State);
+            const handleVerifyUser = async phone => {
+              setIsLoading(true);
+              setUserNotFound(false);
+              try {
+                const response = await fetch(
+                  `http://${DOMAIN}/accounts/CreateDeliveryBoy/?phone=${phone}`,
+                  {
+                    method: 'GET',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                  },
+                );
 
-        ToastAndroid.show(`User found !`, ToastAndroid.SHORT);
-      } else {
-        ToastAndroid.show(
-          responseData.error || 'User not found',
-          ToastAndroid.SHORT,
-        );
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', 'Network request failed.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+                const responseData = await response.json();
 
-  const [onn, setonn] = useState(true);
-  const [isLoadingOtp, setIsLoadingOtp] = useState(false);
-  const [isOptReceived, setIsOptReceived] = useState(false);
-  const handleConfirmOpt = () => {
-    // Handle confirming OTP received
-    setPhoneNumber('');
-    setAdharcard('');
-    setLicense('');
-    setLastName('');
-    setUserName('');
-    setIsOptReceived(false); // Reset state for next verification
-  };
+                if (response.ok && responseData.user_phone) {
+                  console.log(responseData);
+                  setIGotTheuser(true);
+                  setUpdate(true);
+                  setEmail(responseData.user_email);
+                  setAadharNumber(responseData.aadhar_number);
+                  setPanNumber(responseData.pan_number);
+                  setSecondaryPhone(responseData.secondary_phone);
+                  setPhoneNumber(responseData.user_phone);
+                  const [firstName, lastName] = responseData.user_name.split(' ');
+                  setFirstName(firstName);
+                  setLastName(lastName);
+                  setSelectedCity(responseData.user_City);
+                  setGender( responseData.user_Gender == 'Male'
+                    ? 'male'
+                    : responseData.user_Gender == 'Female'
+                    ? 'female'
+                    : responseData.user_Gender == 'Other'
+                    ? 'other'
+                    : '',);
+                  setSelectedState(responseData.user_State);
 
-  const [User, setUser] = useState([]);
-  const [EmergencyCOntact, setEmergencyCOntact] = useState([]);
-  const fetchData = async () => {
-    try {
-      const response = await fetch(
-        `http://${DOMAIN}/Bike/usercount/${phoneNumber}/`,
-      );
-      const data = await response.json();
-      setUserCount(data);
-      const response2 = await fetch(
-        `http://${DOMAIN}/User/Profile/${phoneNumber}/`,
-      );
-      const data2 = await response2.json();
+                  ToastAndroid.show(`User found !`, ToastAndroid.SHORT);
+                } else {
+                  ToastAndroid.show(
+                    responseData.error || 'User not found',
+                    ToastAndroid.SHORT,
+                  );
+                }
+              } catch (error) {
+                console.error('Error:', error);
+                Alert.alert('Error', 'Network request failed.');
+              } finally {
+                setIsLoading(false);
+              }
+            };
 
-      setUser(data2.data);
-      setEmergencyCOntact(data2.emergency);
+            const [onn, setonn] = useState(true);
+            const [isLoadingOtp, setIsLoadingOtp] = useState(false);
+            const [isOptReceived, setIsOptReceived] = useState(false);
+            const handleConfirmOpt = () => {
+              // Handle confirming OTP received
+              setPhoneNumber('');
+              setAdharcard('');
+              setLicense('');
+              setLastName('');
+              setUserName('');
+              setIsOptReceived(false); // Reset state for next verification
+            };
 
-      //  else {
-      //   // otp logic
-      //   // const response = await fetch(
-      //   //   `http://${DOMAIN}/Bike/sendotp/${phoneNumber}/`,
-      //   // );
-      // }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-  const handleVerify2 = () => {
-    // Simulate sending OTP to user
-    if (User) {
-      // Trim any leading or trailing whitespace from the name
-      const trimmedName = User.name.trim();
+            const [User, setUser] = useState([]);
+            const [EmergencyCOntact, setEmergencyCOntact] = useState([]);
+            const fetchData = async () => {
+              try {
+                const response = await fetch(
+                  `http://${DOMAIN}/Bike/usercount/${phoneNumber}/`,
+                );
+                const data = await response.json();
+                setUserCount(data);
+                const response2 = await fetch(
+                  `http://${DOMAIN}/User/Profile/${phoneNumber}/`,
+                );
+                const data2 = await response2.json();
 
-      // Split the name into parts based on space
-      const nameParts = trimmedName.split(' ');
+                setUser(data2.data);
+                setEmergencyCOntact(data2.emergency);
 
-      // Extract first name and last name, assuming there is at least one space
-      const fname = nameParts[0] || '';
-      const lname = nameParts[1] || '';
+                //  else {
+                //   // otp logic
+                //   // const response = await fetch(
+                //   //   `http://${DOMAIN}/Bike/sendotp/${phoneNumber}/`,
+                //   // );
+                // }
+              } catch (error) {
+                console.error('Error fetching data:', error);
+              }
+            };
+            const handleVerify2 = () => {
+              // Simulate sending OTP to user
+              if (User) {
+                // Trim any leading or trailing whitespace from the name
+                const trimmedName = User.name.trim();
 
-      // Set the state with first name and last name
-      setFirstName(User.name.split(' ')[0]);
-      setLastName(User.name.split(' ')[1]);
-      setEmail(User.email);
-      setSelectedCity(User.City);
-      setGender(
-        User.Gender == 'Male'
-          ? 'male'
-          : User.Gender == 'Female'
-          ? 'female'
-          : User.Gender == 'Other'
-          ? 'other'
-          : '',
-      );
-      setSelectedState(User.State);
-    }
+                // Split the name into parts based on space
+                const nameParts = trimmedName.split(' ');
 
-    // setIsLoadingOtp(true);
-    // setTimeout(() => {
-    //   setIsLoadingOtp(false);
-    //   setIsOptReceived(true);
-    // }, 3000); // Simulating a delay of 3 seconds for receiving OTP
-  };
+                // Extract first name and last name, assuming there is at least one space
+                const fname = nameParts[0] || '';
+                const lname = nameParts[1] || '';
 
-  useEffect(() => {
-    if (phoneNumber.length >= 10) {
-      setIsLoading(true);
-      fetchData();
-    }
-    setIsLoading(false);
-  }, [IGotTheuser, phoneNumber]);
+                // Set the state with first name and last name
+                setFirstName(User.name.split(' ')[0]);
+                setLastName(User.name.split(' ')[1]);
+                setEmail(User.email);
+                setSelectedCity(User.City);
+                setGender(
+                  User.Gender  == 'Male'
+                    ? 'male'
+                    : User.Gender == 'Female'
+                    ? 'female'
+                    : User.Gender == 'Other'
+                    ? 'other'
+                    : '',
+                );
+                setSelectedState(User.State);
+              }
+
+              // setIsLoadingOtp(true);
+              // setTimeout(() => {
+              //   setIsLoadingOtp(false);
+              //   setIsOptReceived(true);
+              // }, 3000); // Simulating a delay of 3 seconds for receiving OTP
+            };
+
+            useEffect(() => {
+              if (phoneNumber.length >= 10) {
+                setIsLoading(true);
+                fetchData();
+              }
+              setIsLoading(false);
+            }, [IGotTheuser, phoneNumber]);
 
   return (
     <View style={{flex: 1, backgroundColor: '#fefce8'}}>
@@ -487,7 +516,6 @@ const CustomerDetails = () => {
               <Text style={styles.label}>State</Text>
               <Picker
                 selectedValue={selectedState}
-                
                 onValueChange={value => {
                   setSelectedState(value);
                   setSelectedCity('');
@@ -556,7 +584,9 @@ const CustomerDetails = () => {
                   }}
                   style={styles.input2}
                   keyboardType="phone-pad"
+                  maxLength={10}
                 />
+
                 {onn ? (
                   <View>
                     {isLoadingOtp ? (
@@ -628,9 +658,6 @@ const CustomerDetails = () => {
                     )}
                   </View>
                 ) : null}
-                {phoneError ? (
-                  <Text style={styles.errorText}>{phoneError}</Text>
-                ) : null}
               </View>
             )}
 
@@ -650,8 +677,8 @@ const CustomerDetails = () => {
                 keyboardType="phone-pad"
                 maxLength={10}
               />
-              {phoneError ? (
-                <Text style={styles.errorText}>{phoneError}</Text>
+              {SecondaryphoneError ? (
+                <Text style={styles.errorText}>{SecondaryphoneError}</Text>
               ) : null}
             </View>
 
@@ -681,7 +708,13 @@ const CustomerDetails = () => {
                 placeholderTextColor="#000"
                 onChangeText={setAadharNumber}
                 style={styles.input}
+                keyboardType="phone-pad"
+                maxLength={12}
               />
+
+              {aadharError ? (
+                <Text style={{color: 'red', fontSize: 12}}>{aadharError}</Text>
+              ) : null}
             </View>
 
             {/* Email */}
@@ -690,7 +723,7 @@ const CustomerDetails = () => {
                 placeholder="Email"
                 value={email}
                 placeholderTextColor="#000"
-                onChangeText={setEmail}
+                onChangeText={handleEmailChange}
                 style={styles.input}
                 keyboardType="email-address"
               />
