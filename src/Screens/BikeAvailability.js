@@ -20,7 +20,7 @@ const BikeAvailability = ({navigation}) => {
   const [AssignedBikesNumber, setAssignedBikesNumber] = useState(0);
   const [FilteredassignedDetails, setFilteredassignedDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [openDropDown, setopenDropDown] = useState(false);
+  const [openDropDownFor, setopenDropDownFor] = useState(null);
   const [batteryList, setBatteryList] = useState([
     {label: 'Select Battery', value: 'Select Battery'},
   ]);
@@ -175,6 +175,8 @@ const BikeAvailability = ({navigation}) => {
     setRefreshing(true);
     setIsLoading(true);
     fetchData();
+    setIsSearchActive(false);
+    setSearchQuery('');
   }, []);
 
   const formatDate = dateString => {
@@ -249,14 +251,18 @@ const BikeAvailability = ({navigation}) => {
 
     setTimeout(() => {
       onRefresh();
-    }, 2000);
+    }, 5000);
   };
 
   return (
     <View style={styles.container}>
       {isSearchActive && (
         <View style={styles.searchContainer}>
-          <TouchableOpacity onPress={() => setIsSearchActive(false)}>
+          <TouchableOpacity
+            onPress={() => {
+              setIsSearchActive(false);
+              setSearchQuery('');
+            }}>
             <Ionicons name="arrow-back-outline" size={24} style={styles.icon} />
           </TouchableOpacity>
           <TextInput
@@ -296,7 +302,7 @@ const BikeAvailability = ({navigation}) => {
                 justifyContent: 'space-evenly',
                 marginTop: 30,
               }}>
-              <Text className="text-black">{15 - AssignedBikesNumber}</Text>
+              <Text className="text-black">{27 - AssignedBikesNumber}</Text>
             </View>
           </View>
           <View style={[styles.summaryCard, styles.AssignedDetailsd]}>
@@ -478,6 +484,7 @@ const BikeAvailability = ({navigation}) => {
                       Extend
                     </Text>
                   </TouchableOpacity>
+
                   <TouchableOpacity
                     style={{
                       backgroundColor: '#fff',
@@ -489,8 +496,10 @@ const BikeAvailability = ({navigation}) => {
                       paddingVertical: 10,
                     }} // Adding margin to the left for spacing
                     onPress={() => {
-                      getBatteries(); // Fetch batteries
-                      setopenDropDown(prev => !prev); // Toggle the dropdown state
+                      getBatteries();
+                      setopenDropDownFor(
+                        rental?.id === openDropDownFor ? null : rental?.id,
+                      );
                     }}>
                     <Text
                       style={{fontSize: 13, color: '#000', fontWeight: 'bold'}}>
@@ -498,8 +507,7 @@ const BikeAvailability = ({navigation}) => {
                     </Text>
                   </TouchableOpacity>
                 </View>
-
-                {openDropDown && (
+                {openDropDownFor == rental.id && (
                   <View>
                     <Dropdown
                       style={styles.dropdown}
@@ -517,7 +525,7 @@ const BikeAvailability = ({navigation}) => {
                       placeholder="Select Battery"
                       searchPlaceholder="Search..."
                       onChange={item => {
-                        setopenDropDown(false);
+                        setopenDropDownFor(null);
                         setSelectedBattery(item.value);
                         handleswap(
                           user?.phone,
@@ -612,7 +620,7 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: 'bold',
     marginBottom: 0,
-   
+
     fontFamily: 'Poppins Bold',
     letterSpacing: 1,
   },

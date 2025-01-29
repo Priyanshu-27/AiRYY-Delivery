@@ -141,8 +141,12 @@ const VehicleDetails = () => {
     //   Alert.alert('Error', 'Please fill all the required fields.');
     //   return;
     // }
-
-    // Convert TimeTaken into hours based on the selected unit (hours, days, or months)
+    if(Number(AdvancePayUPI) + Number(AdvancePayCash) < Amount*(7)){
+      return Alert.alert('Error', `Minimum Advance amount is ${Amount*(7)}`);
+    }
+    if (Number(ReturnAmountUPI) + Number(ReturnAmountCash) < 500) {
+      return Alert.alert('Error', 'Minimum deposit amount is 500');
+    } 
     let timeInHours = parseFloat(TimeTaken);
     if (TimeTakenUnit === 'days') {
       timeInHours *= 24;
@@ -427,7 +431,7 @@ const VehicleDetails = () => {
           />
 
           <Checkbox
-            text="Advance Payment (Optional)"
+            text="Advance Payment"
             value={AdvancePay === 'AdvancePay'}
             onPress={() => handlechange('AdvancePay')}
           />
@@ -452,7 +456,7 @@ const VehicleDetails = () => {
           ) : null}
 
           <Checkbox
-            text="Deposite Payment (Optional)"
+            text="Deposite Payment"
             value={ReturnAmount === 'ReturnAmount'}
             onPress={() => handlechange2('ReturnAmount')}
           />
